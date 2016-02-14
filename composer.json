@@ -1,5 +1,5 @@
 {
-  "name": "sfynx-project/sonata-admin-bundle",
+  "name": "sfynx-project/sonata-media-bundle",
   "type": "symfony-bundle",
   "description": "This Bundle overload the SonataMediaBundle, with crop system",
   "keywords": ["cmf", "acl"],
