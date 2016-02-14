@@ -1,0 +1,45 @@
+{
+  "name": "sfynx-project/sonata-admin-bundle",
+  "type": "symfony-bundle",
+  "description": "This Bundle overload the SonataMediaBundle, with crop system",
+  "keywords": ["cmf", "acl"],
+  "homepage": "http://pigroupe.github.io/cmf-sfynx/",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Etienne de Longeaux",
+      "email": "etienne.delongeaux@gmail.com"
+    },
+    {
+      "name": "Sfynx Community",
+      "homepage": "https://github.com/pigroupe/SfynxMediaBundle/contributors"
+    }
+  ],
+
+  "require": {
+    "symfony/framework-bundle": "~2.3"
+  },
+
+  "require-dev": {
+    "symfony/phpunit-bridge": "~2.7|~3.0",
+    "phpunit/phpunit": "*"
+  },
+
+  "suggest": {
+  },
+
+  "conflict": {
+  },
+
+  "autoload": {
+    "psr-0": { "Sfynx\\MediaBundle": "" }
+  },
+
+  "target-dir": "Sfynx/MediaBundle",
+
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.3-dev"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+gallery:
+    resource: '@SonataMediaBundle/Resources/config/routing/gallery.xml'
+    prefix: /media/gallery
+
+media:
+    resource: '@SonataMediaBundle/Resources/config/routing/media.xml'
+    prefix: /media
+    
+pixlr:
+    resource: '@SonataMediaBundle/Resources/config/routing/pixlr.xml'
+    prefix: /   
+    
+#
+#   import routes from a controller directory
+#
+annotation_gedmo:
+    resource: "@SfynxMediaBundle/Controller"
+    type:     annotation    
+    
+#SfynxMediaBundle:Mediatheque
+piapp_gedmo_media:
+    resource: "@SfynxMediaBundle/Resources/config/routing/media.xml"
+    prefix: /admin/gedmo/media     
