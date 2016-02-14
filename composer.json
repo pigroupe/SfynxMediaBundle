@@ -2,7 +2,7 @@
   "name": "sfynx-project/sonata-media-bundle",
   "type": "symfony-bundle",
   "description": "This Bundle overload the SonataMediaBundle, with crop system",
-  "keywords": ["cmf", "acl"],
+  "keywords": ["cmf", "mediatheque"],
   "homepage": "http://pigroupe.github.io/cmf-sfynx/",
   "license": "MIT",
   "authors": [
