@@ -6,7 +6,7 @@
         @author <yourname> <youremail>
     -->
 
-    <class name="Sfynx\MediaBundle\Document\GalleryHasMedia" exclusion-policy="all" xml-root-name="_gallery_has_media">
+    <class name="Sfynx\MediaBundle\Layers\Document\GalleryHasMedia" exclusion-policy="all" xml-root-name="_gallery_has_media">
 
         <property xml-attribute-map="true" name="id" type="integer" expose="true" since-version="1.0" groups="sonata_api_read,sonata_api_write,sonata_search" />
 

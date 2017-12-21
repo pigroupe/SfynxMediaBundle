@@ -1,0 +1,107 @@
+<?php
+namespace Sfynx\MediaBundle\Layers\Presentation\Request\Mediatheque\Command;
+
+use Symfony\Component\OptionsResolver\Options;
+
+use Sfynx\CoreBundle\Layers\Presentation\Request\Generalisation\AbstractFormRequest;
+
+/**
+ * Class FormRequest
+ *
+ * @category Sfynx\MediaBundle\Layers
+ * @package Presentation
+ * @subpackage Request\Mediatheque\Command
+ * @author     Etienne de Longeaux <etienne.delongeaux@gmail.com>
+ */
+class FormRequest extends AbstractFormRequest
+{
+    /**
+     * @var array $defaults List of default values for optional parameters.
+     */
+    protected $defaults = [
+        'entityId' => null,
+        'category' => '',
+        'NoLayout' => '',
+        'status' => null,
+        'title' => null,
+        'descriptif' => null,
+        'url' => null,
+        'mediadelete' => false,
+        'copyright' => null,
+        'position' => null,
+        'publishedAt' => null,
+        'archived' => false,
+        'enabled' => true,
+        'image' => null
+    ];
+
+    /**
+     * @var string[] $required List of required parameters for each methods.
+     */
+    protected $required = [
+        'GET'  => ['status'],
+        'POST' => ['status', 'title', 'enabled'],
+        'PUT'  => ['entityId', 'status', 'title', 'enabled']
+    ];
+
+    /**
+     * @var array[] $allowedTypes List of allowed types for each methods.
+     */
+    protected $allowedTypes = [
+        'GET' => [
+            'category' => ['string', 'null'],
+            'NoLayout' => array('bool', 'null'),
+            'status' => ['string'],
+        ],
+        'POST' => [
+            'entityId' => ['int', 'null'],
+            'category' => ['string', 'null'],
+            'NoLayout' => array('bool', 'null'),
+            'status' => ['string'],
+            'title' => ['string'],
+            'descriptif' => ['string', 'null'],
+            'url' => ['string', 'null'],
+            'mediadelete' => ['bool', 'null'],
+            'copyright' => ['string', 'null'],
+            'position' => ['int', 'null'],
+            'publishedAt' => ['string', 'null'],
+            'archived' => ['bool', 'null'],
+            'enabled' => ['bool'],
+            'image' => ['array', 'null']
+        ]
+    ];
+
+//    /**
+//     * @var array[] $normalizers List of normalizers transformation for each methods.
+//     */
+//    protected $normalizers = [
+//        'POST' => [
+//            'media' => function(Options $options, $value) {
+//                if (null !== $value) {
+//                    return $value;
+//                }
+//                return $options['media']->getClientOriginalName();
+//            }
+//        ]
+//    ];
+
+    /**
+     * @return void
+     */
+    protected function setOptions()
+    {
+        $this->status = $this->request->get('status');
+        $this->options = $this->request->getRequest()->get('sfynx_mediabundle_mediatype_' . $this->status);
+        $this->options['status'] = $this->status;
+        $this->options['NoLayout'] = $this->request->getQuery()->get('NoLayout');
+
+        foreach (['NoLayout','archived', 'enabled', 'mediadelete'] as $data) {
+            if (isset($this->options[$data])) {
+                $this->options[$data] = (int)$this->options[$data] ? true : false;
+            }
+        }
+        $id = $this->request->get('id', '');
+        $this->options['entityId'] = ('' !== $id) ? (int)$id : null;
+        $this->options = (null !== $this->options) ? $this->options : [];
+    }
+}

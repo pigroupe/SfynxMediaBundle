@@ -29,10 +29,10 @@
 #    default_context: default
 #    db_driver: doctrine_orm
 #    class:
-#        media:              Sfynx\MediaBundle\Entity\Media
+#        media:              Sfynx\MediaBundle\Layers\Domain\Entity\Media
 #        category:           Sfynx\ClassificationBundle\Entity\Category
-#        gallery:            Sfynx\MediaBundle\Entity\Gallery
-#        gallery_has_media:  Sfynx\MediaBundle\Entity\GalleryHasMedia
+#        gallery:            Sfynx\MediaBundle\Layers\Domain\Entity\Gallery
+#        gallery_has_media:  Sfynx\MediaBundle\Layers\Domain\Entity\GalleryHasMedia
 #    contexts:
 #        sonata_collection:
 #            providers:
@@ -48,10 +48,10 @@
 #
 #            formats:
 #                preview: { width: 100, quality: 100}
-#                wide:    { width: 820, quality: 100}        
+#                wide:    { width: 820, quality: 100}
 #        default:  # the default context is mandatory
 #            download:
-#                #strategy: sonata.media.security.session_strategy # a media can be downloaded only once per session.            
+#                #strategy: sonata.media.security.session_strategy # a media can be downloaded only once per session.
 #                strategy: sonata.media.security.public_strategy         # ROLE_USER
 #                #strategy: sonata.media.security.superadmin_strategy  # ROLE_SUPER_ADMIN or ROLE_ADMIN
 #                #strategy: sonata.media.security.public_strategy      # no restriction, files are public
@@ -70,12 +70,12 @@
 #                small: { width: 100 , quality: 70}
 #                #big:   { width: 500 , quality: 70}
 #                #cinema:     { width: 1850 , quality: 768}
-#                #grandmatv:  { width: 640 , quality: 480}                
-#                
+#                #grandmatv:  { width: 640 , quality: 480}
+#
 #    cdn:
 #        server:
 #            path: %kernel.http_host%/uploads/media # http://media.sonata-project.org/
-#            
+#
 #        #panther:
 #        #    path:       http://domain.pantherportal.com/uploads/media
 #        #    site_id:
@@ -84,8 +84,8 @@
 #
 #        #fallback:
 #        #    master:     sonata.media.cdn.panther
-#        #    fallback:   sonata.media.cdn.server     
-#                
+#        #    fallback:   sonata.media.cdn.server
+#
 #    filesystem:
 #        local:
 #            directory:  %kernel.root_dir%/../web/uploads/media
@@ -105,7 +105,7 @@
 #            cdn:        sonata.media.cdn.server
 #            generator:  sonata.media.generator.default
 #            thumbnail:  sonata.media.thumbnail.format
-#        
+#
 #        youtube:
 #            resizer:    sonata.media.resizer.simple
 #            filesystem: sonata.media.filesystem.local
@@ -119,13 +119,13 @@
 #            cdn:        sonata.media.cdn.server
 #            generator:  sonata.media.generator.default
 #            thumbnail:  sonata.media.thumbnail.format
-#                       
+#
 #        vimeo:
 #            resizer:    sonata.media.resizer.simple
 #            filesystem: sonata.media.filesystem.local
 #            cdn:        sonata.media.cdn.server
 #            generator:  sonata.media.generator.default
-#            thumbnail:  sonata.media.thumbnail.format  
+#            thumbnail:  sonata.media.thumbnail.format
 ##
 ## MenuBundle configuration
 ##
@@ -146,8 +146,8 @@
 #        distinct: true                 # ensure distinct results, useful when ORM queries are using GROUP BY statements
 #    template:
 #        pagination: KnpPaginatorBundle:Pagination:sliding.html.twig     # sliding pagination controls template
-#        sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template 
-#        
+#        sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
+#
 #knp_snappy:
 #    pdf:
 #        enabled:    true
@@ -156,4 +156,4 @@
 #    image:
 #        enabled:    true
 #        #binary:     /usr/local/bin/wkhtmltoimage
-#        options:    []   
+#        options:    []
