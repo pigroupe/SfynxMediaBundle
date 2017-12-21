@@ -1,8 +1,8 @@
 {
-  "name": "sfynx-project/sonata-media-bundle",
+  "name": "sfynx-project/media-bundle",
   "type": "symfony-bundle",
-  "description": "This Bundle overload the SonataMediaBundle, with crop system",
-  "keywords": ["cmf", "mediatheque"],
+  "description": "This Bundle provides a mediatheque to manage medias or documents",
+  "keywords": ["mediatheque", "media", "document", "crop", "DDD"],
   "homepage": "http://pigroupe.github.io/cmf-sfynx/",
   "license": "LGPL-3.0+",
   "authors": [
@@ -17,7 +17,9 @@
   ],
 
   "require": {
-    "symfony/framework-bundle": "~2.8"
+    "symfony/framework-bundle": "~2.8|~3.0"
+    "doctrine/orm":                 "*",
+    "doctrine/doctrine-bundle":     "*",
   },
 
   "require-dev": {
@@ -39,7 +41,7 @@
 
   "extra": {
     "branch-alias": {
-      "dev-master": "2.8-dev"
+      "dev-master": "2.x-dev"
     }
   }
 }

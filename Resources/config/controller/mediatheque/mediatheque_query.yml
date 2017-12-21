@@ -1,0 +1,40 @@
+services:
+    sfynx.media.controller.query.selectajax.mediatheques:
+        shared: false
+        class: 'Sfynx\MediaBundle\Layers\Presentation\Coordination\Mediatheque\Query\SelectAjaxController'
+        arguments:
+            - '@security.authorization_checker'
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.core.request.strategy'
+            - '@security.csrf.token_manager'
+            - '@sfynx.tool.twig.extension.form'
+            - '@translator'
+            - '@twig'
+
+    sfynx.media.controller.query.index.mediatheques:
+        class: 'Sfynx\MediaBundle\Layers\Presentation\Coordination\Mediatheque\Query\IndexController'
+        arguments:
+            - '@security.authorization_checker'
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.core.request.strategy'
+            - '@templating'
+            - '@sfynx.tool.twig.extension.form'
+            - '@sfynx.auth.role.factory'
+            - '@sfynx.tool.twig.extension.tool'
+            - '@sfynx.tool.route.factory'
+            - '@translator'
+        calls:
+            - [ setParams, [ { sfynx_auth_theme_login: '%sfynx.template.theme.login%' } ] ]
+            - [ setParams, [ { sfynx_template_theme_layout_admin_grid_img: '%sfynx.template.theme.layout.admin.grid.img%' } ] ]
+
+    sfynx.media.controller.query.show.mediatheques:
+        shared: false
+        class: 'Sfynx\MediaBundle\Layers\Presentation\Coordination\Mediatheque\Query\ShowController'
+        arguments:
+            - '@security.authorization_checker'
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.core.request.strategy'
+            - '@templating'
+            - '@sfynx.tool.twig.extension.form'
+        calls:
+            - [ setParams, [ { sfynx_auth_theme_login: '%sfynx.template.theme.login%' } ] ]

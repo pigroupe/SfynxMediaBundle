@@ -1,0 +1,70 @@
+parameters:
+    sfynx.media.controller.command.form.class: Sfynx\MediaBundle\Layers\Presentation\Coordination\Mediatheque\Command\FormController
+
+services:
+    sfynx.media.controller.command.form.mediatheques:
+        shared: false
+        class: '%sfynx.media.controller.command.form.class%'
+        arguments:
+            - '@security.authorization_checker'
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.gedmo.manager.category.entity'
+            - '@sfynx.core.request.strategy'
+            - '@templating'
+            - '@form.factory'
+            - '@validator'
+            - '@sfynx.tool.route.factory'
+            - '@translator'
+        calls:
+            - [ setParams, [ { sfynx_auth_theme_login: '%sfynx.template.theme.login%' } ] ]
+
+    sfynx.media.controller.command.enabledajax.mediatheques:
+        shared: false
+        class: '%sfynx.core.controller.command.enabledajax.class%'
+        arguments:
+            - '@security.authorization_checker'
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.core.request.strategy'
+            - '@security.csrf.token_manager'
+            - '@sfynx.tool.twig.extension.form'
+
+
+    sfynx.media.controller.command.disableajax.mediatheques:
+        shared: false
+        class: '%sfynx.core.controller.command.disableajax.class%'
+        arguments:
+            - '@security.authorization_checker'
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.core.request.strategy'
+            - '@security.csrf.token_manager'
+            - '@sfynx.tool.twig.extension.form'
+
+    sfynx.media.controller.command.deletajax.mediatheques:
+        shared: false
+        class: '%sfynx.core.controller.command.deletajax.class%'
+        arguments:
+            - '@security.authorization_checker'
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.core.request.strategy'
+            - '@security.csrf.token_manager'
+            - '@sfynx.tool.twig.extension.form'
+
+    sfynx.media.controller.command.archiveajax.mediatheques:
+        shared: false
+        class: '%sfynx.core.controller.command.archiveajax.class%'
+        arguments:
+            - '@security.authorization_checker'
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.core.request.strategy'
+            - '@security.csrf.token_manager'
+            - '@sfynx.tool.twig.extension.form'
+
+    sfynx.media.controller.command.positionajax.mediatheques:
+        shared: false
+        class: '%sfynx.core.controller.command.positionajax.class%'
+        arguments:
+            - '@security.authorization_checker'
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.core.request.strategy'
+            - '@security.csrf.token_manager'
+            - '@sfynx.tool.twig.extension.form'

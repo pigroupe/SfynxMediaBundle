@@ -1,9 +1,7 @@
 #SfynxAuthBundle 
 
 This bundle is responsible for :
-* overload the FOSUserBundle with role, permission and group dynamic system
-* set handlers for login behavior
-* set handler for logout behavior and failure connection behavior
+* ...
 
 The following documents are available :
 

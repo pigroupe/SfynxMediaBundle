@@ -1,18 +1,18 @@
 parameters:
-    sfynx.media.twig.extension.crop.class: Sfynx\MediaBundle\Twig\Extension\PiCropExtension
+    sfynx.media.twig.extension.crop.class: Sfynx\MediaBundle\Layers\Twig\Extension\PiCropExtension
 
 services:
-    #
-    # configuration of the Twig and Template
-    #  
-    sfynx.media.twig:
-        class: %twig.class%
-        calls:
-             - [ addGlobal, ['app', '@templating.globals'] ]
-             
+#    #
+#    # configuration of the Twig and Template
+#    #
+#    sfynx.media.twig:
+#        class: %twig.class%
+#        calls:
+#             - [ addGlobal, ['app', '@templating.globals'] ]
+
     #
     # configuration of the sfynx extensions
-    #         
+    #
     sfynx.media.twig.extension.crop:
         class: %sfynx.media.twig.extension.crop.class%
         arguments: ['@service_container']

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="sfynx_media_mediatheque_enabledentity_ajax" path="/enabled">
+        <default key="_controller">sfynx.media.controller.command.enabledajax.mediatheques:coordinate</default>
+    </route>
+
+    <route id="sfynx_media_mediatheque_disablentity_ajax" path="/disable">
+        <default key="_controller">sfynx.media.controller.command.disableajax.mediatheques:coordinate</default>
+    </route>
+
+    <route id="sfynx_media_mediatheque_position_ajax" path="/position">
+        <default key="_controller">sfynx.media.controller.command.positionajax.mediatheques:coordinate</default>
+    </route>
+
+    <route id="sfynx_media_mediatheque_deletentity_ajax" path="/delete">
+        <default key="_controller">sfynx.media.controller.command.deletajax.mediatheques:coordinate</default>
+    </route>
+
+    <route id="sfynx_media_mediatheque_archiventity_ajax" path="/archive">
+        <default key="_controller">sfynx.media.controller.command.archiveajax.mediatheques:coordinate</default>
+    </route>
+
+    <route id="sfynx_media_mediatheque_edit" path="/edit/{status}/{id}" >
+        <default key="_controller">sfynx.media.controller.command.form.mediatheques:coordinate</default>
+        <default key="id"></default>
+        <default key="status">image</default>
+    </route>
+
+    <route id="sfynx_media_mediatheque_selectentity_ajax" path="/select/{status}">
+        <default key="_controller">sfynx.media.controller.query.selectajax.mediatheques:coordinate</default>
+        <default key="status">image</default>
+    </route>
+
+    <route id="sfynx_media_mediatheque" path="/">
+        <default key="_controller">sfynx.media.controller.query.index.mediatheques:coordinate</default>
+        <default key="isServerSide">1</default>
+    </route>
+
+    <route id="sfynx_media_mediatheque_show" path="/show/{id}" >
+        <default key="_controller">sfynx.media.controller.query.show.mediatheques:coordinate</default>
+    </route>
+
+</routes>

@@ -1,0 +1,27 @@
+parameters:
+    sfynx.media.event_subscriber.storage.handler.class: Sfynx\MediaBundle\Layers\Domain\EventSubscriber\StorageProviderHandler
+
+services:
+    #
+    # configuration of the event subscriber of entities
+    #
+    sfynx.media.event_subscriber.storage.handler:
+        class: '%sfynx.media.event_subscriber.storage.handler.class%'
+        arguments:
+            - '%sfynx.media.storage.provider%'
+            - '@service_container'
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    sfynx.media.storage_provider.api_media:
+        class: 'Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\ApiMediaStorageProvider'
+        arguments:
+            - '@da_api_client.api.media'
+        tags:
+            - { name: sfynx_media.storage_provider, alias: Sfynx Media }
+
+    sfynx.media.storage_provider.media:
+        class: 'Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\MediaStorageProvider'
+        arguments:
+        tags:
+            - { name: sfynx_media.storage_provider, alias: Sfynx Media }

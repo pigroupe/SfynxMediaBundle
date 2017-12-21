@@ -1,0 +1,22 @@
+parameters:
+    # Manager class
+    sfynx.media.manager.mediatheque.entity.class: Sfynx\MediaBundle\Layers\Domain\Service\Mediatheque\Manager\EntityManager
+    # Adapter factory class
+    sfynx.media.factory.mediatheque.class: Sfynx\CoreBundle\Layers\Infrastructure\Persistence\Factory\MultiAdapterFactory
+    # Entity class value
+    sfynx.media.manager.mediatheque.params:
+      class: '%sfynx.media.mediatheque_class%'
+    # Reposioty names
+    sfynx.media.repository.mediatheque.orm.command.class: Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Command\Orm\MediathequeRepository
+    sfynx.media.repository.mediatheque.orm.query.class: Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Query\Orm\MediathequeRepository
+
+services:
+    #
+    # configuration of the user manager working with Orm, Odm, Couchdb
+    #
+    sfynx.media.manager.mediatheque.entity:
+        class: '%sfynx.media.manager.mediatheque.entity.class%'
+        arguments:
+            - '@sfynx.media.factory.mediatheque'
+        calls:
+            - [ setParams, [ '%sfynx.media.manager.mediatheque.params%' ] ]

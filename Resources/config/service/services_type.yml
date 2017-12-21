@@ -1,0 +1,70 @@
+services:
+    #
+    # configuration of the forms
+    #
+    sfynx_media.form_type.related_to_one_media:
+        class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\RelatedToOneMediaType'
+        arguments:
+            - '@sfynx.media.event_subscriber.storage.handler'
+            - '@validator'
+        tags:
+            - { name: form.type, alias: sfynx_related_to_one_media }
+
+    sfynx_media.form_type.related_to_many_media:
+        class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\RelatedToManyMediaType'
+        arguments:
+            - '@sfynx.media.event_subscriber.storage.handler'
+            - '@validator'
+        tags:
+            - { name: form.type, alias: sfynx_related_to_many_media }
+
+    sfynx_media.form_type.transformable_image_upload:
+        class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\TransformableImageUploadType'
+        arguments:
+            - '@sfynx.media.event_subscriber.storage.handler'
+            - '@validator'
+        tags:
+            - { name: form.type, alias: sfynx_transformable_image_upload }
+
+    #
+    # configuration of the MediathequeType forms
+    #
+    sfynx_media.form_type.file:
+        class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\MediathequeType'
+        arguments:
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.tool.route.factory'
+            - '@translator'
+            - 'file'
+        tags:
+            - { name: form.type }
+
+    sfynx_media.form_type.image:
+        class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\MediathequeType'
+        arguments:
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.tool.route.factory'
+            - '@translator'
+            - 'image'
+        tags:
+            - { name: form.type }
+
+    sfynx_media.form_type.youtube:
+        class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\MediathequeType'
+        arguments:
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.tool.route.factory'
+            - '@translator'
+            - 'youtube'
+        tags:
+            - { name: form.type }
+
+    sfynx_media.form_type.dailymotion:
+        class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\MediathequeType'
+        arguments:
+            - '@sfynx.media.manager.mediatheque'
+            - '@sfynx.tool.route.factory'
+            - '@translator'
+            - 'dailymotion'
+        tags:
+            - { name: form.type }
