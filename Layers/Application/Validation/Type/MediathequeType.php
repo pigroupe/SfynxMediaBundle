@@ -270,6 +270,10 @@ class MediathequeType extends AbstractType
                      'storage_provider' => 'gaufrette_storage_gallery_local',
                      'storage_source' => 'mediatheque/picture',
                      'handler'     => 'sfynx.media.provider.picture',
+                     'metadata' => [
+                         'form_name' => 'sfynx_mediabundle_mediatype_picture',
+                         'field_form' => 'image'
+                     ],
                      'context'      => $this->_context,
                      'label'        => $this->_labelLink,
                      "label_attr" => [
@@ -286,6 +290,10 @@ class MediathequeType extends AbstractType
                         'storage_provider' => 'gaufrette_storage_gallery_local',
                         'storage_source' => 'mediatheque/picture',
              	        'handler' => 'sfynx.media.provider.picture',
+                        'metadata' => [
+                            'form_name' => 'sfynx_mediabundle_mediatype_picture',
+                            'field_form' => 'image'
+                        ],
              			'context' => $this->_context,
              			'label' => "pi.form.label.media.picture.miniature",
              			"label_attr" => [

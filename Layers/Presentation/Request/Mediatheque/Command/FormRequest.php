@@ -71,20 +71,6 @@ class FormRequest extends AbstractFormRequest
         ]
     ];
 
-//    /**
-//     * @var array[] $normalizers List of normalizers transformation for each methods.
-//     */
-//    protected $normalizers = [
-//        'POST' => [
-//            'media' => function(Options $options, $value) {
-//                if (null !== $value) {
-//                    return $value;
-//                }
-//                return $options['media']->getClientOriginalName();
-//            }
-//        ]
-//    ];
-
     /**
      * @return void
      */

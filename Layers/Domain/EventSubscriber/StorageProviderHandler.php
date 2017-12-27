@@ -271,7 +271,7 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
      */
     protected function cropImage($eventArgs)
     {
-    	if ($this->container->isScopeActive('request')
+        if ($this->container->get('request_stack')->getCurrentRequest()
             && isset($_SERVER['REQUEST_URI'])
             && !empty($_SERVER['REQUEST_URI'])
         ) {
