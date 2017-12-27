@@ -26,7 +26,6 @@ class RelatedToOneMediaType extends AbstractMediaType
         parent::buildForm($builder, $options);
 
         $this->setPreSetData($builder, $options);
-        $this->setPostSubmit($builder, $options);
     }
 
     /**

@@ -84,7 +84,6 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
      * @var string $status
      *
      * @ORM\Column(name="status", type="string", length=25, nullable=true)
-     * @Assert\NotBlank(message = "erreur.status.notblank")
      */
     protected $status;
 

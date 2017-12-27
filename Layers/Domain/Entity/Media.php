@@ -112,7 +112,7 @@ class Media implements MediaInterface
     protected $extension;
 
     /**
-     * @ORM\Column(type="json_array", nullable=true)
+     * @ORM\Column(type="json", nullable=true)
      */
     protected $metadata;
 
@@ -178,33 +178,33 @@ class Media implements MediaInterface
         );
     }
 
-    /**
-     * Magic setter.
-     *
-     * @param string $name  The setter name.
-     * @param mixed  $value The value to set.
-     * @return Media
-     */
-    public function __set($name, $value)
-    {
-        $name = Inflector::tableize($name);
-        $this->setMetadata($name, $value);
-
-        return $this;
-    }
-
-    /**
-     * Magic getter.
-     *
-     * @param string $name The getter name.
-     * @return mixed The value.
-     */
-    public function __get($name)
-    {
-        $name = Inflector::tableize($name);
-
-        return $this->getMetadata($name);
-    }
+//    /**
+//     * Magic setter.
+//     *
+//     * @param string $name  The setter name.
+//     * @param mixed  $value The value to set.
+//     * @return Media
+//     */
+//    public function __set($name, $value)
+//    {
+//        $name = Inflector::tableize($name);
+//        $this->setMetadata($name, $value);
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * Magic getter.
+//     *
+//     * @param string $name The getter name.
+//     * @return mixed The value.
+//     */
+//    public function __get($name)
+//    {
+//        $name = Inflector::tableize($name);
+//
+//        return $this->getMetadata($name);
+//    }
 
     /**
      * Magic call.
@@ -568,42 +568,58 @@ class Media implements MediaInterface
     }
 
     /**
-     * Set metadata.
-     *
-     * @param array|string $key
-     * @param mixed        $value
-     * @return Media
-     */
-    public function setMetadata($key, $value)
-    {
-        $this->metadata[$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * Returns metadata.
-     *
-     * @param string|null $key
-     * @return mixed|null
-     */
-    public function getMetadata($key = null)
-    {
-        if (null === $key) {
-            return $this->metadata;
-        }
-
-        return $this->hasMetadata($key) ? $this->metadata[$key] : null;
-    }
-
-    /**
-     * Returns weather metadata has a key
-     *
-     * @param string $key
      * @return mixed
      */
-    public function hasMetadata($key)
+    public function getMetadata()
     {
-        return isset($this->metadata[$key]);
+        return $this->metadata;
     }
+
+    /**
+     * @param mixed $metadata
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
+//    /**
+//     * Set metadata.
+//     *
+//     * @param array|string $key
+//     * @param mixed        $value
+//     * @return Media
+//     */
+//    public function setMetadata($key, $value)
+//    {
+//        $this->metadata[$key] = $value;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * Returns metadata.
+//     *
+//     * @param string|null $key
+//     * @return mixed|null
+//     */
+//    public function getMetadata($key = null)
+//    {
+//        if (null === $key) {
+//            return $this->metadata;
+//        }
+//
+//        return $this->hasMetadata($key) ? $this->metadata[$key] : null;
+//    }
+//
+//    /**
+//     * Returns weather metadata has a key
+//     *
+//     * @param string $key
+//     * @return mixed
+//     */
+//    public function hasMetadata($key)
+//    {
+//        return isset($this->metadata[$key]);
+//    }
 }

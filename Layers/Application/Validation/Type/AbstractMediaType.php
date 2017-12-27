@@ -10,8 +10,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 use Sfynx\MediaBundle\Layers\Domain\EventSubscriber\StorageProviderHandler;
 use Sfynx\MediaBundle\Layers\Infrastructure\Exception\MediaClientException;
 
@@ -64,6 +65,13 @@ class AbstractMediaType extends AbstractType
             ->add('sourceName', HiddenType::class, [
                 'data'  => $options['storage_source'],
             ])
+            ->add('updated_at', null, [
+                'widget' => 'single_text', // choice, text, single_text
+                'attr' => ['style'=>'display:none;'],
+                "label_attr" => [
+                    "style"=> 'display:none;',
+                ],
+            ])
             ;
     }
 
@@ -76,14 +84,14 @@ class AbstractMediaType extends AbstractType
                 'metadata'
             ])
             ->setDefaults([
-                'data_class' => 'Sfynx\MediaBundle\Layers\Domain\Entity\Media',
+                'data_class' => Media::class,
                 'storage_provider' => '',
                 'storage_source' => '',
                 'handler' => '',
                 'context' => '',
                 'metadata' => [
                     'form_name' => 'sfynx_mediabundle_mediatype_file',
-                    'field_form' => 'coincoin'
+                    'field_form' => 'media'
                 ],
                 'attr' => [
                     'class' => sprintf('sfynx_media_%s', $this->getName())
@@ -140,34 +148,6 @@ class AbstractMediaType extends AbstractType
                 ]);
             },
             50
-        );
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    protected function setPostSubmit(FormBuilderInterface $builder, array $options)
-    {
-        $handler = $this->storageProviderHandler;
-        $validator = $this->validator;
-        $builder->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function(FormEvent $event) use ($handler, $validator, $options) {
-                print_r('coinconi');exit;
-                $form = $event->getForm();
-                if (!is_null($validator)) {
-                    $violations = $validator->validate($form);
-                    if (count($violations) > 0) {
-                        return false;
-                    }
-                }
-
-                $media = $form->getData();
-                if (null === $media) {
-                    return false;
-                }
-            }
         );
     }
 }
