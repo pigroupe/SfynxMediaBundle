@@ -125,7 +125,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
      */
     public function create(Media & $media, ?array $metadata)
     {
-//        try {
+        try {
             return $this
                 ->getRestClient()
                 ->post('/media', [
@@ -144,9 +144,9 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                     )
                 ])
             ;
-//        } catch (ApiHttpResponseException $e) {
-//            return false;
-//        }
+        } catch (ApiHttpResponseException $e) {
+            return false;
+        }
     }
 
     /**
