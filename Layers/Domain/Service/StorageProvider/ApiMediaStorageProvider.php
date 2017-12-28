@@ -47,23 +47,31 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
      */
     protected function doAdd(Media & $media)
     {
-        $metadata = json_decode($media->getMetadata(), true);
+        $metadata = $media->getMetadata();
+        if (!is_array($media->getMetadata())
+            && null !== $metadata
+        ) {
+            $metadata = json_decode($metadata, true);
+        }
 
         // 1. Upload case case
-        if (null == $media->getUploadedFile()) {
-            $form_name = $metadata['form_name'];
-            $field_form = $metadata['field_form'];
+        if (null == $media->getUploadedFile()
+            && isset($metadata['form_name'])
+            && isset($metadata['field_form'])
+        ) {
+                $form_name = $metadata['form_name'];
+                $field_form = $metadata['field_form'];
 
-            if (null != ($_FILES[$form_name]['tmp_name'][$field_form]['uploadedFile'])) {
-                $path = $_FILES[$form_name]['tmp_name'][$field_form]['uploadedFile'];
-                $originalName = $_FILES[$form_name]['name'][$field_form]['uploadedFile'];
-                $mimeType = $_FILES[$form_name]['type'][$field_form]['uploadedFile'];
-                $size = $_FILES[$form_name]['size'][$field_form]['uploadedFile'];
-                $error = $_FILES[$form_name]['error'][$field_form]['uploadedFile'];
+                if (null != ($_FILES[$form_name]['tmp_name'][$field_form]['uploadedFile'])) {
+                    $path = $_FILES[$form_name]['tmp_name'][$field_form]['uploadedFile'];
+                    $originalName = $_FILES[$form_name]['name'][$field_form]['uploadedFile'];
+                    $mimeType = $_FILES[$form_name]['type'][$field_form]['uploadedFile'];
+                    $size = $_FILES[$form_name]['size'][$field_form]['uploadedFile'];
+                    $error = $_FILES[$form_name]['error'][$field_form]['uploadedFile'];
 
-                $UploadedFile = new UploadedFile($path, $originalName, $mimeType, $size, $error);
-                $media->setUploadedFile($UploadedFile);
-            }
+                    $UploadedFile = new UploadedFile($path, $originalName, $mimeType, $size, $error);
+                    $media->setUploadedFile($UploadedFile);
+                }
         }
 
         // 2. InsertUpdate case
@@ -90,7 +98,10 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
         }
 
         if (null !== $media->getUploadedFile()) {
-            $response = $this->create($media);
+            $response = $this->create($media, $metadata);
+            if (!$response) {
+                return false;
+            }
             $apiMedia = json_decode($response->getContent(), true);
 
             $media->setProviderData($apiMedia);
@@ -112,17 +123,20 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
     /**
      * {@inheritdoc}
      */
-    public function create(Media & $media)
+    public function create(Media & $media, ?array $metadata)
     {
         try {
             return $this
                 ->getRestClient()
                 ->post('/media', [
                     'source' => $media->getSourceName(),
-                    'name' => $media->getUploadedFile()->getClientOriginalName(),
                     'storage_provider' => $media->getProviderName(),
+                    'name' => $media->getUploadedFile()->getClientOriginalName(),
                     'description' => $media->getDescriptif(),
-                    'metadata' => json_decode($media->getMetadata(), true),
+                    'metadata' => array_merge($metadata, [
+                        'title' => $media->getTitle(),
+                        'description' => $media->getDescriptif()
+                    ]),
                     'media' => curl_file_create(
                         $media->getUploadedFile()->getPathName(),
                         $media->getUploadedFile()->getMimeType(),

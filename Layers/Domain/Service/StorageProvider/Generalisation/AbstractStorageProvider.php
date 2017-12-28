@@ -59,7 +59,7 @@ abstract class AbstractStorageProvider implements StorageProviderInterface
      * @param  Media $media
      * @return string
      */
-    abstract public function create(Media & $media);
+    abstract public function create(Media & $media, ?array $metadata);
 
     /**
      * Do update a media

@@ -318,6 +318,7 @@ class Media implements MediaInterface
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -332,6 +333,7 @@ class Media implements MediaInterface
      * Set title
      *
      * @param string $title
+     * @return Media
      */
     public function setTitle($title)
     {
@@ -353,6 +355,7 @@ class Media implements MediaInterface
      * Set descriptif
      *
      * @param text $descriptif
+     * @return Media
      */
     public function setDescriptif ($descriptif)
     {

@@ -267,7 +267,7 @@ class MediathequeType extends AbstractType
              if ($this->_labelLink == "") $this->_labelLink = 'pi.form.label.media.picture';
              if ($this->_context == "")    $this->_context  = 'default';
              $builder->add('image', RelatedToOneMediaType::class, [
-                     'storage_provider' => 'gaufrette_storage_gallery_local',
+                     'storage_provider' => 'gaufrette_storage_gallery_azure',
                      'storage_source' => 'mediatheque/picture',
                      'handler'     => 'sfynx.media.provider.picture',
                      'metadata' => [
@@ -287,7 +287,7 @@ class MediathequeType extends AbstractType
              	if ($this->_labelLink == "") $this->_labelLink = 'miniature';
              	if ($this->_context == "")    $this->_context        = 'default';
              	$builder->add('image2', RelatedToOneMediaType::class, [
-                        'storage_provider' => 'gaufrette_storage_gallery_local',
+                        'storage_provider' => 'gaufrette_storage_gallery_azure',
                         'storage_source' => 'mediatheque/picture',
              	        'handler' => 'sfynx.media.provider.picture',
                         'metadata' => [
