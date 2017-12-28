@@ -50,7 +50,7 @@ class MediaStorageProvider extends AbstractStorageProvider
     /**
      * {@inheritdoc}
      */
-    public function create(Media & $media)
+    public function create(Media & $media, ?array $metadata)
     {
         $media
             ->setSource($this->getSourceName())
