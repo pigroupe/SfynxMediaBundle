@@ -125,7 +125,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
      */
     public function create(Media & $media, ?array $metadata)
     {
-        try {
+//        try {
             return $this
                 ->getRestClient()
                 ->post('/media', [
@@ -139,14 +139,14 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                     ]),
                     'media' => curl_file_create(
                         $media->getUploadedFile()->getPathName(),
-                        $media->getUploadedFile()->getMimeType(),
+                        $media->getUploadedFile()->getClientMimeType(),
                         $media->getUploadedFile()->getClientOriginalName()
                     )
                 ])
             ;
-        } catch (ApiHttpResponseException $e) {
-            return false;
-        }
+//        } catch (ApiHttpResponseException $e) {
+//            return false;
+//        }
     }
 
     /**
