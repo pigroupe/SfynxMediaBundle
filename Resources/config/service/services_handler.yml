@@ -7,6 +7,7 @@ services:
     #
     sfynx.media.event_subscriber.storage.handler:
         class: '%sfynx.media.event_subscriber.storage.handler.class%'
+        public: false
         arguments:
             - '%sfynx.media.storage.provider%'
             - '@service_container'
@@ -15,13 +16,15 @@ services:
 
     sfynx.media.storage_provider.api_media:
         class: 'Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\ApiMediaStorageProvider'
+        public: true
         arguments:
-            - '@da_api_client.api.media'
+            - '@sfynx_rest_client.api.media'
         tags:
             - { name: sfynx_media.storage_provider, alias: Sfynx Media }
 
     sfynx.media.storage_provider.media:
         class: 'Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\MediaStorageProvider'
+        public: true
         arguments:
         tags:
             - { name: sfynx_media.storage_provider, alias: Sfynx Media }

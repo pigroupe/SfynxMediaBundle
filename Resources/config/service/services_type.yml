@@ -4,6 +4,7 @@ services:
     #
     sfynx_media.form_type.related_to_one_media:
         class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\RelatedToOneMediaType'
+        public: true
         arguments:
             - '@sfynx.media.event_subscriber.storage.handler'
             - '@validator'
@@ -12,6 +13,7 @@ services:
 
     sfynx_media.form_type.related_to_many_media:
         class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\RelatedToManyMediaType'
+        public: true
         arguments:
             - '@sfynx.media.event_subscriber.storage.handler'
             - '@validator'
@@ -20,6 +22,7 @@ services:
 
     sfynx_media.form_type.transformable_image_upload:
         class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\TransformableImageUploadType'
+        public: true
         arguments:
             - '@sfynx.media.event_subscriber.storage.handler'
             - '@validator'
@@ -31,6 +34,7 @@ services:
     #
     sfynx_media.form_type.file:
         class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\MediathequeType'
+        public: true
         arguments:
             - '@sfynx.media.manager.mediatheque'
             - '@sfynx.tool.route.factory'
@@ -41,6 +45,7 @@ services:
 
     sfynx_media.form_type.image:
         class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\MediathequeType'
+        public: true
         arguments:
             - '@sfynx.media.manager.mediatheque'
             - '@sfynx.tool.route.factory'
@@ -51,6 +56,7 @@ services:
 
     sfynx_media.form_type.youtube:
         class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\MediathequeType'
+        public: true
         arguments:
             - '@sfynx.media.manager.mediatheque'
             - '@sfynx.tool.route.factory'
@@ -61,6 +67,7 @@ services:
 
     sfynx_media.form_type.dailymotion:
         class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\MediathequeType'
+        public: true
         arguments:
             - '@sfynx.media.manager.mediatheque'
             - '@sfynx.tool.route.factory'
