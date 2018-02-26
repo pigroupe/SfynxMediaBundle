@@ -57,9 +57,9 @@ class OBEntityCreate extends AbstractEntityCreateHandler
         if ($specs->isSatisfiedBy($object)) {
             $this->wfLastData->url = $this->router->generate('sfynx_media_mediatheque_edit', [
                 'id' => $this->wfLastData->entity->getId(),
-                'NoLayout' => $this->wfCommand->NoLayout,
-                'category' => $this->wfCommand->category,
-                'status' => $this->wfCommand->status
+                'NoLayout' => $this->wfCommand->getNoLayout(),
+                'category' => $this->wfCommand->getCategory(),
+                'status' => $this->wfCommand->getStatus()
             ]);
         }
     }

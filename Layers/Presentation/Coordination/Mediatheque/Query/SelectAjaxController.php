@@ -3,6 +3,7 @@ namespace Sfynx\MediaBundle\Layers\Presentation\Coordination\Mediatheque\Query;
 
 use Symfony\Component\HttpFoundation\Response;
 use Sfynx\CoreBundle\Layers\Presentation\Coordination\Generalisation\AbstractSelectAjaxController;
+use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 
 /**
  * Index controller.
@@ -26,10 +27,10 @@ class SelectAjaxController extends AbstractSelectAjaxController
     protected function init(): void
     {
         // we set param
-        $status = $this->request->get('status', '');
-        $this->setParams('pagination', $this->request->get('pagination', null));
-        $this->setParams('max', $this->request->get('max', 10));
-        $this->setParams('keyword', [
+        $this->status = $this->request->get('status', '');
+        $this->setParam('pagination', $this->request->get('pagination', null));
+        $this->setParam('max', $this->request->get('max', 10));
+        $this->setParam('keyword', [
             0 => [
                 'field_name' => 'title',
                 'field_value' => $this->request->get('keyword', ''),
@@ -37,15 +38,15 @@ class SelectAjaxController extends AbstractSelectAjaxController
                 'field_trans_name' => 'trans',
             ],
         ]);
-        $this->setParam('cacheQuery_hash', [
-            'time'      => 3600,
-            'namespace' => 'hash_list_auth_user'
-        ]);
-        $this->setParams('query', $this->manager->getQueryRepository()->createQueryBuilder('a')
+//        $this->setParam('cacheQuery_hash', [
+//            'time'      => 3600,
+//            'namespace' => 'hash_list_auth_user'
+//        ]);
+        $this->setParam('query', $this->manager->getQueryRepository()->createQueryBuilder('a')
             ->leftJoin('a.translations', 'trans')
             ->leftJoin('a.image', 'm')
-            ->andWhere('a.image IS NOT NULL')
-            ->andWhere("a.status = '{$status}'")
+//            ->andWhere('a.image IS NOT NULL')
+//            ->andWhere("a.status = '{$this->status}'")
         );
     }
 
@@ -71,14 +72,14 @@ class SelectAjaxController extends AbstractSelectAjaxController
             if (!(null === $cat)) {
                 $content .=  ' ('. $cat->getName() .')';
             }
-            if (($this->type == 'image')
+            if (($this->status == 'image')
                 && ($obj->getImage() instanceof Media)
             ) {
-                $content .= "<img width='100px' src=\"{{ media_url('".$obj->getImage()->getId()."', 'small', true, '".$obj->getUpdatedAt()->format('Y-m-d H:i:s')."', 'gedmo_media_') }}\" alt='Photo'/>";
+                $content .= "<img width='100px' src=\"".$obj->getImage()->getUrl($obj->getImage()->getExtension())."\" alt='Photo'/>";
             }
             $tab[] = array(
                 'id'   => $obj->getId(),
-                'text' => $this->container->get('twig')->render($content, array())
+                'text' => $this->twig->render($content, [])
             );
         }
 

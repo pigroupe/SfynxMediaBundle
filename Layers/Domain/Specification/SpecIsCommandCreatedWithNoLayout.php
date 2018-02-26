@@ -23,7 +23,7 @@ class SpecIsCommandCreatedWithNoLayout extends AbstractSpecification
      */
     public function isSatisfiedBy(stdClass $object): bool
     {
-        return property_exists($object->wfCommand, 'NoLayout') &&
-            is_bool($object->wfCommand->NoLayout);
+        return property_exists($object->wfCommand, 'noLayout') &&
+            is_bool($object->wfCommand->noLayout);
     }
 }

@@ -96,9 +96,9 @@ class IndexController extends AbstractQueryController
      */
     public function coordinate()
     {
-        if (false === $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedException();
-        }
+//        if (false === $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+//            throw new AccessDeniedException();
+//        }
 
         // 1. Transform Request to Query.
         $adapter = new QueryAdapter(new IndexQuery());
@@ -106,7 +106,9 @@ class IndexController extends AbstractQueryController
             new IndexQueryRequest($this->request)
         );
 
-//        $query->isServerSide = false;
+        $query->isServerSide = true ;
+
+//        dump($query);exit;
 
         // 2. Implement the query workflow
         $Observer1 = new OBMediathequeIndexCreateQueryHandler($this->manager, $this->request);
@@ -133,7 +135,14 @@ class IndexController extends AbstractQueryController
         $this->param->templating = 'SfynxMediaBundle:Mediatheque:index.html.twig';
         $Observer1 = new OBCreateIndexBodyHtml($this->request, $this->templating, $this->param);
         $Observer2 = new OBCreateResponseHtml($this->request);
-        $Observer3 = new OBMediathequeCreateIndexBodyJson($this->request, $this->roleFactory, $this->toolExtension, $this->routeFactory, $this->translator, $this->param);
+        $Observer3 = new OBMediathequeCreateIndexBodyJson(
+            $this->request,
+            $this->roleFactory,
+            $this->toolExtension,
+            $this->routeFactory,
+            $this->translator,
+            $this->param
+        );
         $Observer4 = new OBCreateIndexResponseJson($this->request);
         $workflowHandler = (new WorkflowHandler())
             ->attach($Observer1)

@@ -44,13 +44,13 @@ class OBCreateFormData extends AbstractCreateFormData
             if ($this->wfHandler->entity->getCategory()) {
                 $id_category = $this->wfHandler->entity->getCategory()->getId();
             } else {
-                $id_category = $this->wfHandler->command->category;
+                $id_category = $this->wfHandler->command->getCategory();
             }
             if (isset($_POST['sfynx_mediabundle_mediatype_image']['category'])) {
                 $id_category = $_POST['sfynx_mediabundle_mediatype_image']['category'];
             }
             $this->wfLastData->formViewData['id_category'] = $id_category;
-            $this->wfLastData->formViewData['status'] = $this->wfHandler->command->status;
+            $this->wfLastData->formViewData['status'] = $this->wfHandler->command->getStatus();
 
             $this->wfLastData->formViewData['categories'] = $this->managerGedmoCategory
                 ->getQueryRepository()
