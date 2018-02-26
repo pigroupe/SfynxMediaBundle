@@ -4,7 +4,7 @@
   "description": "This Bundle provides a mediatheque to manage medias or documents",
   "keywords": ["mediatheque", "media", "document", "crop", "DDD"],
   "homepage": "http://pigroupe.github.io/cmf-sfynx/",
-  "license": "LGPL-3.0-or-latter",
+  "license": "LGPL-3.0-or-later",
   "authors": [
     {
       "name": "Etienne de Longeaux",
