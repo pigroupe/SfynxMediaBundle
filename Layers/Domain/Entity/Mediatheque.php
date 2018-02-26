@@ -14,6 +14,8 @@ use Sfynx\MediaBundle\Layers\Domain\Entity\Interfaces\MediathequeInterface;
 use Sfynx\MediaBundle\Layers\Domain\Entity\AddTrait;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 
+use Sfynx\DoctrineRestDriver\Layers\Application\Routing\Annotations as DataSource;
+
 /**
  * Sfynx\MediaBundle\Layers\Domain\Entity\Mediatheque
  *
@@ -32,6 +34,15 @@ use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
  * @version    2.3
  * @link       http://opensource.org/licenses/gpl-license.php
  * @since      2015-02-16
+ *
+ *
+ * @DataSource\Select("http://dildevelop-demoapi-orm.alterway.dev/api/v1/actors.json/{id}", method="GET", statusCode=200, options={"X-TENANT-ID"="000001"})
+ * @DataSource\Fetch("http://dildevelop-demoapi-orm.alterway.dev/api/v1/actors.json", method="GET", statusCode=200, options={"X-TENANT-ID"="000001"})
+ * @DataSource\SearchBy("http://dildevelop-demoapi-orm.alterway.dev/api/v1/actor/searchby.json", method="GET", statusCode=200, options={"X-TENANT-ID"="000001"})
+ * @DataSource\Insert("http://dildevelop-demoapi-orm.alterway.dev/api/v1/actors.json", method="POST", statusCode=200, options={"X-TENANT-ID"="000001"})
+ * @DataSource\Update("http://dildevelop-demoapi-orm.alterway.dev/api/v1/actors.json/{id}", method="PUT", statusCode=200, options={"X-TENANT-ID"="000001"})
+ * @DataSource\Patch("http://dildevelop-demoapi-orm.alterway.dev/api/v1/actors.json/{id}", method="PATCH", statusCode=200, options={"X-TENANT-ID"="000001"})
+ * @DataSource\Delete("http://dildevelop-demoapi-orm.alterway.dev/api/v1/actors.json/{id}", method="DELETE", statusCode=200, options={"X-TENANT-ID"="000001"} )
  */
 class Mediatheque extends AbstractDefault implements MediathequeInterface
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Sfynx\MediaBundle\Layers\Twig\Extension;
+namespace Sfynx\MediaBundle\Twig\Extension;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
@@ -280,7 +280,7 @@ class PiCropExtension extends \Twig_Extension
      * @access public
      * @author Etienne de Longeaux <etienne.delongeaux@gmail.com>
      */
-    public function getMediaUrlFunction(MediaInterface $media, $format = "small", $cachable = true, $modifdate = false, $pattern = "media_")
+    public function getMediaUrlFunction( MediaInterface $media, $format = "small", $cachable = true, $modifdate = false, $pattern = "media_")
     {
         $url_public_media = '';
         $timestamp = 0;
@@ -292,7 +292,6 @@ class PiCropExtension extends \Twig_Extension
         try {
             $params = $this->container->getParameter("sfynx.media.format.{$format}");
             if (!$cachable) {
-
                 $url_public_media = $media->getUrl($media->getExtension(), $params);
             } else {
                 $id = $media->getId();

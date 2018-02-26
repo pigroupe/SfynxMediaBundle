@@ -10,7 +10,7 @@ use Sfynx\MediaBundle\Layers\Domain\Specification\Authorisation\SpecIsRoleUser;
 use Sfynx\MediaBundle\Layers\Domain\Specification\Authorisation\SpecIsRoleAnonymous;
 
 /**
- * Class UpdateCommandValidationHandler.
+ * Class FormCommandSpecHandler.
  *
  * @category   Sfynx\MediaBundle\Layers
  * @package    Application

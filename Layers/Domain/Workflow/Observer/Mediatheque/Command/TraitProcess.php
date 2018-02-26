@@ -31,7 +31,7 @@ trait TraitProcess
                 $this->manager->getCommandRepository()->getCacheFactory()->deleteAllCacheQuery('hash_list_gedmomedia');
             }
         } catch (Exception $e) {
-            $this->wfCommand->errors['success'] = 'errors.user.save';
+            $this->wfCommand->errors['success'] = 'errors.mediatheque.save';
         }
         // we add the last entity version
         $this->wfLastData->entity = $entity;

@@ -150,4 +150,32 @@ class AbstractMediaType extends AbstractType
             50
         );
     }
+
+//    /**
+//     * @param FormBuilderInterface $builder
+//     * @param array $options
+//     */
+//    protected function setPostSubmit(FormBuilderInterface $builder, array $options)
+//    {
+//        $handler = $this->storageProviderHandler;
+//        $validator = $this->validator;
+//        $builder->addEventListener(
+//            FormEvents::POST_SUBMIT,
+//            function(FormEvent $event) use ($handler, $validator, $options) {
+//                print_r('coinconi');exit;
+//                $form = $event->getForm();
+//                if (!is_null($validator)) {
+//                    $violations = $validator->validate($form);
+//                    if (count($violations) > 0) {
+//                        return false;
+//                    }
+//                }
+//
+//                $media = $form->getData();
+//                if (null === $media) {
+//                    return false;
+//                }
+//            }
+//        );
+//    }
 }

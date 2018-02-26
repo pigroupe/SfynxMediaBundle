@@ -22,8 +22,8 @@ class OBCreateIndexBodyJson extends AbstractCreateIndexBodyJson
      */
     protected function process(): bool
     {
-        $NoLayout = $this->wfHandler->query->NoLayout;
-        $category = $this->wfHandler->query->category;
+        $NoLayout = $this->wfHandler->query->getNoLayout();
+        $category = $this->wfHandler->query->getCategory();
 
         $this->wfLastData->rows = [];
         try {

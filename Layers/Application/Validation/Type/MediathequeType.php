@@ -110,9 +110,9 @@ class MediathequeType extends AbstractType
                 ])
                  ->add('category', EntityType::class, [
                     'class' => 'PiAppGedmoBundle:Category',
-                     'query_builder' => function (EntityRepository $er) use ($categories) {
+                    'query_builder' => function (EntityRepository $er) use ($categories) {
                          return $categories;
-                     },
+                    },
                     'placeholder' => 'pi.form.label.select.choose.category',
                     'label'    => "pi.form.label.field.category",
                     'multiple'    => false,

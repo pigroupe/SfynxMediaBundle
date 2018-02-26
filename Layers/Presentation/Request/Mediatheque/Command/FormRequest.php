@@ -21,7 +21,7 @@ class FormRequest extends AbstractFormRequest
     protected $defaults = [
         'entityId' => null,
         'category' => '',
-        'NoLayout' => '',
+        'noLayout' => '',
         'status' => null,
         'title' => null,
         'descriptif' => null,
@@ -50,13 +50,13 @@ class FormRequest extends AbstractFormRequest
     protected $allowedTypes = [
         'GET' => [
             'category' => ['string', 'null'],
-            'NoLayout' => array('bool', 'null'),
+            'noLayout' => array('bool', 'null'),
             'status' => ['string'],
         ],
         'POST' => [
             'entityId' => ['int', 'null'],
             'category' => ['string', 'null'],
-            'NoLayout' => array('bool', 'null'),
+            'noLayout' => array('bool', 'null'),
             'status' => ['string'],
             'title' => ['string'],
             'descriptif' => ['string', 'null'],
@@ -79,9 +79,9 @@ class FormRequest extends AbstractFormRequest
         $this->status = $this->request->get('status');
         $this->options = $this->request->getRequest()->get('sfynx_mediabundle_mediatype_' . $this->status);
         $this->options['status'] = $this->status;
-        $this->options['NoLayout'] = $this->request->getQuery()->get('NoLayout');
+        $this->options['noLayout'] = $this->request->getQuery()->get('NoLayout');
 
-        foreach (['NoLayout','archived', 'enabled', 'mediadelete'] as $data) {
+        foreach (['noLayout','archived', 'enabled', 'mediadelete'] as $data) {
             if (isset($this->options[$data])) {
                 $this->options[$data] = (int)$this->options[$data] ? true : false;
             }

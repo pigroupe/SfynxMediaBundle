@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Sfynx\CoreBundle\DependencyInjection\Compiler\Provider\FactoryPass;
 
 /**
- * Class ChangeRepositoryFactoryPass
+ * Class ChangeProviderPass
  *
  * @category   Sfynx\MediaBundle
  * @package    DependencyInjection

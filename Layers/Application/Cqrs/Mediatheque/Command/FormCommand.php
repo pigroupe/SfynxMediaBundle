@@ -17,7 +17,7 @@ class FormCommand extends AbstractCommand
     /** @var string */
     public $category;
     /** @var string */
-    public $NoLayout;
+    public $noLayout;
     /** @var string */
     public $status;
     /** @var string */

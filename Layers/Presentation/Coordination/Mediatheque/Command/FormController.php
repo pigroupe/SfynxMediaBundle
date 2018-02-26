@@ -24,7 +24,7 @@ use Sfynx\CoreBundle\Layers\Application\Common\Handler\WorkflowHandler;
 use Sfynx\CoreBundle\Layers\Application\Command\WorkflowCommand;
 use Sfynx\CoreBundle\Layers\Domain\Service\Manager\Generalisation\Interfaces\ManagerInterface;
 use Sfynx\CoreBundle\Layers\Domain\Service\Request\Generalisation\RequestInterface;
-use Sfynx\CoreBundle\Layers\Domain\Workflow\Observer\Response\OBCreateFormView;
+use Sfynx\CoreBundle\Layers\Domain\Workflow\Observer\Response\OBCreateEntityFormView;
 use Sfynx\CoreBundle\Layers\Domain\Workflow\Observer\Response\OBInjectFormErrors;
 use Sfynx\CoreBundle\Layers\Domain\Workflow\Observer\Response\OBCreateFormBody;
 use Sfynx\CoreBundle\Layers\Domain\Workflow\Observer\Response\OBCreateResponseHtml;
@@ -124,7 +124,7 @@ class FormController extends AbstractFormController
         // 4. Implement the Response workflow
         $this->param->templating = 'SfynxMediaBundle:Mediatheque:edit.html.twig';
         $Observer1 = new OBMediathequeCreateFormData($this->request, $this->managerGedmoCategory);
-        $Observer2 = new OBCreateFormView($this->request, $this->formFactory, new MediathequeType(
+        $Observer2 = new OBCreateEntityFormView($this->request, $this->formFactory, new MediathequeType(
             $this->manager,
             $this->routeFactory,
             $this->translator

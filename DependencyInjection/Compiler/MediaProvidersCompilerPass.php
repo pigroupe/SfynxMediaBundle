@@ -6,6 +6,19 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 
+/**
+ * Class MediaProvidersCompilerPass
+ *
+ * @category   Sfynx\MediaBundle
+ * @package    DependencyInjection
+ * @subpackage Compiler
+ * @author     Etienne de Longeaux <etienne.delongeaux@gmail.com>
+ * @copyright  2015 PI-GROUPE
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @version    2.3
+ * @link       http://opensource.org/licenses/gpl-license.php
+ * @since      2015-02-16
+ */
 class MediaProvidersCompilerPass implements CompilerPassInterface
 {
     /**

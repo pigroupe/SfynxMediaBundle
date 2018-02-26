@@ -3,9 +3,9 @@ namespace Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\EntityManagerInterface;
-use Da\ApiClientBundle\Exception\ApiHttpResponseException;
-use Da\ApiClientBundle\Http\Rest\RestApiClientInterface;
 
+use Sfynx\RestClientBundle\Exception\ApiHttpResponseException;
+use Sfynx\RestClientBundle\Http\Rest\RestApiClientInterface;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 use Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\Generalisation\AbstractStorageProvider;
 
@@ -125,7 +125,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
      */
     public function create(Media & $media, ?array $metadata)
     {
-//        try {
+        try {
             return $this
                 ->getRestClient()
                 ->post('/media', [
@@ -144,9 +144,9 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                     )
                 ])
             ;
-//        } catch (ApiHttpResponseException $e) {
-//            return false;
-//        }
+        } catch (ApiHttpResponseException $e) {
+            return false;
+        }
     }
 
     /**
