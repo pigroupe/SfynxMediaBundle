@@ -27,11 +27,11 @@
     "symfony/framework-bundle": "~2.8|~3.0",
     "doctrine/orm": "*",
     "doctrine/doctrine-bundle": "*",
-    "sfynx-project/tool-specification-bundle": "~2.8.3",
-    "sfynx-project/tool-utils-bundle": "~2.8.1",
-    "sfynx-project/template-presentation-bundle": "~2.8.1",
-    "sfynx-project/rest-client-bundle": "~2.8.2",
-    "sfynx-project/core-bundle": "~2.9.0",
+    "sfynx-project/tool-specification-bundle": "^2.8.3",
+    "sfynx-project/tool-utils-bundle": "^2.8.1",
+    "sfynx-project/template-presentation-bundle": "^2.8.1",
+    "sfynx-project/rest-client-bundle": "^2.8.2",
+    "sfynx-project/core-bundle": "^2.9",
     "sfynx-project/auth-bundle": "2.x-dev"
   },
 
