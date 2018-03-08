@@ -39,7 +39,7 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
         return array(
             Events::prePersist,
             Events::preUpdate,
-//            Events::preRemove,
+            Events::preRemove,
         );
     }
 
@@ -238,7 +238,7 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
         }
         if ($entity instanceof MediaInterface) {
             $provider = $this->getStorageProvider($this->providerName);
-            $provider->remove($entity->getProviderReference());
+            $provider->remove($entity);
         }
     }
 
