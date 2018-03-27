@@ -32,7 +32,8 @@
     "sfynx-project/template-presentation-bundle": "^2.8.1",
     "sfynx-project/rest-client-bundle": "^2.8.2",
     "sfynx-project/core-bundle": "^2.9",
-    "sfynx-project/auth-bundle": "2.x-dev"
+    "sfynx-project/auth-bundle": "2.x-dev",
+    "twig/extensions": "^1.4"
   },
 
   "require-dev": {
