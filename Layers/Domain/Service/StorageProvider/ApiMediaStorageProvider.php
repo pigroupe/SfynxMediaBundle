@@ -78,7 +78,10 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
         if ($media->getProviderReference()) {
             if (null === $media->getUploadedFile()) {
                 if (!empty($media->getMetadata())) {
-                    $this->update($media);
+                    $response = $this->update($media);
+                    if (!$response) {
+                        return false;
+                    }
 
                     if ($this->em instanceof EntityManagerInterface) {
                         $this->em->getConnection()->update($this->getOwningTable($entity), $media->__toArray());
@@ -89,7 +92,10 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                 return false;
             } else {
                 // Reupload case, remove the previous associated media
-                $this->remove($media);
+                $response = $this->remove($media);
+                if (!$response) {
+                    return false;
+                }
 
 //                if ($this->em instanceof EntityManagerInterface) {
 //                    $this->em->getConnection()->delete($this->getOwningTable($entity), [$media->getId()]);

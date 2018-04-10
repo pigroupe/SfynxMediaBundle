@@ -15,6 +15,7 @@ use Sfynx\MediaBundle\Layers\Domain\Entity\Interfaces\MediaInterface;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Mediatheque;
 use Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\Generalisation\Interfaces\StorageProviderInterface;
+use Sfynx\MediaBundle\Layers\Infrastructure\Exception\MediaClientException;
 
 /**
  * Storage Provider Handler class to upload files
@@ -210,6 +211,7 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
      * We are deleting a media.
      *
      * @param object $eventArgs
+     * @throws MediaClientException
      */
     protected function addMedia($eventArgs, $media = null)
     {
@@ -221,7 +223,10 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
 
         if ($entity instanceof MediaInterface) {
             $provider = $this->getStorageProvider($this->providerName);
-            $provider->add($entity);
+            $response = $provider->add($entity);
+            if (!$response) {
+                throw new MediaClientException('Add');
+            }
         }
     }
 
@@ -229,6 +234,7 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
      * We are deleting a media.
      *
      * @param object $eventArgs
+     * @throws MediaClientException
      */
     protected function deleteMedia($eventArgs, $media = null)
     {
@@ -238,7 +244,10 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
         }
         if ($entity instanceof MediaInterface) {
             $provider = $this->getStorageProvider($this->providerName);
-            $provider->remove($entity);
+            $response = $provider->remove($entity);
+            if (!$response) {
+                throw new MediaClientException('Delete');
+            }
         }
     }
 
