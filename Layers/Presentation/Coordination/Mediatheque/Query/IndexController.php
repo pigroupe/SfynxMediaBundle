@@ -96,9 +96,9 @@ class IndexController extends AbstractQueryController
      */
     public function coordinate()
     {
-//        if (false === $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-//            throw new AccessDeniedException();
-//        }
+        if (false === $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException();
+        }
 
         // 1. Transform Request to Query.
         $adapter = new QueryAdapter(new IndexQuery());
@@ -107,8 +107,6 @@ class IndexController extends AbstractQueryController
         );
 
         $query->isServerSide = true ;
-
-//        dump($query);exit;
 
         // 2. Implement the query workflow
         $Observer1 = new OBMediathequeIndexCreateQueryHandler($this->manager, $this->request);
