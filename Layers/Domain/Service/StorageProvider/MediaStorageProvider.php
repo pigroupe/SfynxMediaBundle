@@ -70,7 +70,7 @@ class MediaStorageProvider extends AbstractStorageProvider
     /**
      * {@inheritdoc}
      */
-    public function update(Media & $media)
+    public function update(Media & $media, ?array $metadata)
     {
         $media
         ->setProviderReference('/media/%s')

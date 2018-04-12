@@ -8,7 +8,6 @@ use Doctrine\Common\EventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Sfynx\RestClientBundle\Exception\ApiHttpResponseException;
 use Sfynx\CoreBundle\Layers\Infrastructure\EventListener\abstractListener;
 use Sfynx\ToolBundle\Util\PiStringManager;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Interfaces\MediathequeInterface;
@@ -17,7 +16,6 @@ use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Mediatheque;
 use Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\Generalisation\Interfaces\StorageProviderInterface;
 use Sfynx\MediaBundle\Layers\Infrastructure\Exception\MediaClientException;
-use Sfynx\MediaBundle\Layers\Infrastructure\Exception\Factory\MediaFactoryException;
 
 /**
  * Storage Provider Handler class to upload files
@@ -201,6 +199,9 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
             && !$this->isRestrictionByRole($entity)
             && ($entity->getMediadelete() == true)
         ) {
+//            $entity_table = $this->getOwningTable($eventArgs, $entity);
+//            $query = "UPDATE $entity_table mytable SET mytable.media = null WHERE mytable.id = ?";
+//            $this->_connexion($eventArgs)->executeUpdate($query, [$entity->getId()]);
             $this->deleteMedia($eventArgs, $entity->getImage());
             $entity->setImage(null);
         }
@@ -222,11 +223,9 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
 
         if ($entity instanceof MediaInterface) {
             $provider = $this->getStorageProvider($this->providerName);
-
-            try {
-                $response = $provider->add($entity);
-            } catch (ApiHttpResponseException $e) {
-                MediaFactoryException::assertException(['message' => $e->getMessage(), 'body' => $e->getBody()], 2);
+            $response = $provider->add($entity);
+            if (!$response) {
+                throw new MediaClientException('Add');
             }
         }
     }
@@ -245,11 +244,9 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
         }
         if ($entity instanceof MediaInterface) {
             $provider = $this->getStorageProvider($this->providerName);
-
-            try {
-                $response = $provider->remove($entity);
-            } catch (ApiHttpResponseException $e) {
-                MediaFactoryException::assertException(['methode' => $e->getMethod(), 'body' => $e->getBody()], 2);
+            $response = $provider->remove($entity);
+            if (!$response) {
+                throw new MediaClientException('Delete');
             }
         }
     }
@@ -283,7 +280,7 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
      */
     protected function cropImage($eventArgs)
     {
-    	if ($this->container->get('request_stack')->getCurrentRequest()
+        if ($this->container->get('request_stack')->getCurrentRequest()
             && isset($_SERVER['REQUEST_URI'])
             && !empty($_SERVER['REQUEST_URI'])
         ) {
