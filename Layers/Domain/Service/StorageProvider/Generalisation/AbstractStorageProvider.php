@@ -53,36 +53,16 @@ abstract class AbstractStorageProvider implements StorageProviderInterface
      */
     abstract protected function doAdd(Media & $media);
 
-    /**
-     * Do create a media
-     *
-     * @param  Media $media
-     * @return string
-     */
+    /** {@inheritdoc} */
     abstract public function create(Media & $media, ?array $metadata);
 
-    /**
-     * Do update a media
-     *
-     * @param  Media $media
-     * @return boolean
-     */
-    abstract public function update(Media & $media);
+    /** {@inheritdoc} */
+    abstract public function update(Media & $media, ?array $metadata);
 
-    /**
-     * Do remove a media
-     *
-     * @param  string $reference
-     * @return boolean
-     */
+    /** {@inheritdoc} */
     abstract public function remove(Media & $media);
 
-    /**
-     * Do get MediaPublic url
-     *
-     * @param  string $reference
-     * @return string
-     */
+    /** {@inheritdoc} */
     abstract public function getMediaPublicUrl($reference);
 
     /**

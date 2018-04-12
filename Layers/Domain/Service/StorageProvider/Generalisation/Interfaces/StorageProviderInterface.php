@@ -40,6 +40,7 @@ interface StorageProviderInterface
      * Do create a media
      *
      * @param  Media $media
+     * @param array $metadata
      * @return string
      */
     public function create(Media & $media, ?array $metadata);
@@ -48,9 +49,10 @@ interface StorageProviderInterface
      * Do update a media
      *
      * @param  Media $media
+     * @param array $metadata
      * @return boolean
      */
-    public function update(Media & $media);
+    public function update(Media & $media, ?array $metadata);
 
     /**
      * Do remove a media

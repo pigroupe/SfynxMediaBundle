@@ -4,11 +4,10 @@ namespace Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\EntityManagerInterface;
 
-use Sfynx\RestClientBundle\Http\Rest\RestApiClientInterface;
 use Sfynx\RestClientBundle\Exception\ApiHttpResponseException;
+use Sfynx\RestClientBundle\Http\Rest\RestApiClientInterface;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 use Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\Generalisation\AbstractStorageProvider;
-use Sfynx\MediaBundle\Layers\Infrastructure\Exception\Factory\MediaFactoryException;
 
 /**
  * Api provider class to upload files
@@ -78,8 +77,11 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
         // 2. InsertUpdate case
         if ($media->getProviderReference()) {
             if (null === $media->getUploadedFile()) {
-                if (!empty($metadata)) {
-                    $response = $this->update($media, $metadata);
+                if (!empty($media->getMetadata())) {
+                    $response = $this->update($media);
+                    if (!$response) {
+                        return false;
+                    }
 
                     if ($this->em instanceof EntityManagerInterface) {
                         $this->em->getConnection()->update($this->getOwningTable($entity), $media->__toArray());
@@ -87,10 +89,13 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
 
                     return true;
                 }
-                MediaFactoryException::assertException(['body' => 'Add'], 1);
+                return false;
             } else {
                 // Reupload case, remove the previous associated media
                 $response = $this->remove($media);
+                if (!$response) {
+                    return false;
+                }
 
 //                if ($this->em instanceof EntityManagerInterface) {
 //                    $this->em->getConnection()->delete($this->getOwningTable($entity), [$media->getId()]);
@@ -100,7 +105,9 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
 
         if (null !== $media->getUploadedFile()) {
             $response = $this->create($media, $metadata);
-
+            if (!$response) {
+                return false;
+            }
             $apiMedia = json_decode($response->getContent(), true);
 
             $media->setProviderData($apiMedia);
@@ -116,7 +123,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
             return true;
         }
 
-        MediaFactoryException::assertException(['body' => 'Add'], 1);
+        return false;
     }
 
     /**
@@ -124,40 +131,48 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
      */
     public function create(Media & $media, ?array $metadata)
     {
-        return $this
-            ->getRestClient()
-            ->post('/media', [
-                'source' => $media->getSourceName(),
-                'storage_provider' => $media->getProviderName(),
-                'name' => $media->getUploadedFile()->getClientOriginalName(),
-                'description' => $media->getDescriptif(),
-                'metadata' => array_merge($metadata, [
-                    'title' => $media->getTitle(),
-                    'description' => $media->getDescriptif()
-                ]),
-                'media' => curl_file_create(
-                    $media->getUploadedFile()->getPathName(),
-                    $media->getUploadedFile()->getClientMimeType(),
-                    $media->getUploadedFile()->getClientOriginalName()
-                )
-            ])
-        ;
+        try {
+            return $this
+                ->getRestClient()
+                ->post('/media', [
+                    'source' => $media->getSourceName(),
+                    'storage_provider' => $media->getProviderName(),
+                    'name' => $media->getUploadedFile()->getClientOriginalName(),
+                    'description' => $media->getDescriptif(),
+                    'metadata' => array_merge($metadata, [
+                        'title' => $media->getTitle(),
+                        'description' => $media->getDescriptif()
+                    ]),
+                    'media' => curl_file_create(
+                        $media->getUploadedFile()->getPathName(),
+                        $media->getUploadedFile()->getClientMimeType(),
+                        $media->getUploadedFile()->getClientOriginalName()
+                    )
+                ])
+            ;
+        } catch (ApiHttpResponseException $e) {
+            return false;
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function update(Media & $media, ?array $metadata)
+    public function update(Media & $media)
     {
-        return $this
-            ->getRestClient()
-            ->put(sprintf('/media/%s', $media->getProviderReference()), [
-                'metadata' => array_merge($metadata, [
-                    'title' => $media->getTitle(),
-                    'description' => $media->getDescriptif()
-                ])
-            ])
-        ;
+        try {
+            $this
+                ->getRestClient()
+                ->put(
+                    sprintf('/media/%s', $media->getProviderReference()),
+                    array('metadata' => $media->getMetadata())
+                )
+            ;
+        } catch (ApiHttpResponseException $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -166,11 +181,16 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
     public function remove(Media & $media)
     {
         $reference = $media->getProviderReference();
-
-        return $this
+        try {
+            $this
                 ->getRestClient()
                 ->delete('/media/'.$reference)
             ;
+        } catch (ApiHttpResponseException $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
