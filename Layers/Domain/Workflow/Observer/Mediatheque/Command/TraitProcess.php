@@ -3,7 +3,7 @@ namespace Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Command;
 
 use Exception;
 use Symfony\Component\Form\Extension\Core\DataTransformer\ValueToDuplicatesTransformer;
-use Sfynx\CoreBundle\Layers\Domain\Model\Interfaces\EntityInterface;
+
 
 /**
  * Class TraitProcess
@@ -23,9 +23,7 @@ trait TraitProcess
     {
         $entity = $this->wfLastData->entity;
         try {
-            if ($entity instanceof EntityInterface
-                && count($this->wfCommand->errors) == 0
-            ) {
+            if (is_object($entity) && count($this->wfCommand->errors) == 0) {
                 $entity = $this->manager->buildFromCommand($entity, $this->wfCommand);
                 $this->manager->getCommandRepository()->save($entity);
                 $this->manager->getCommandRepository()->getCacheFactory()->deleteAllCacheQuery('hash_list_gedmomedia');

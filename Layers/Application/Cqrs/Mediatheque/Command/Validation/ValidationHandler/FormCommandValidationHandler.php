@@ -1,7 +1,7 @@
 <?php
 namespace Sfynx\MediaBundle\Layers\Application\Cqrs\Mediatheque\Command\Validation\ValidationHandler;
 
-use Sfynx\CoreBundle\Layers\Application\Validation\Generalisation\ValidationHandler\AbstractCommandValidationHandler;
+use Sfynx\CoreBundle\Layers\Application\Command\Validation\ValidationHandler\Generalisation\AbstractCommandValidationHandler;
 use Sfynx\CoreBundle\Layers\Application\Command\Generalisation\Interfaces\CommandInterface;
 use Sfynx\CoreBundle\Layers\Application\Validation\Validator\Constraint\AssocAll;
 use Symfony\Component\Validator\Constraints as Assert;
