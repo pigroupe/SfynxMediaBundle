@@ -7,11 +7,11 @@ use Sfynx\CoreBundle\Layers\Presentation\Coordination\Generalisation\AbstractQue
 use Sfynx\CoreBundle\Layers\Presentation\Request\Query\ShowQueryRequest;
 use Sfynx\CoreBundle\Layers\Presentation\Adapter\Query\QueryAdapter;
 use Sfynx\CoreBundle\Layers\Application\Query\ShowQuery;
-use Sfynx\CoreBundle\Layers\Application\Query\WorkflowQuery;
+use Sfynx\CoreBundle\Layers\Application\Query\Workflow\QueryWorkflow;
 use Sfynx\CoreBundle\Layers\Application\Query\Handler\ShowQueryHandler;
 use Sfynx\CoreBundle\Layers\Application\Common\Handler\WorkflowHandler;
 use Sfynx\CoreBundle\Layers\Application\Common\Generalisation\Interfaces\HandlerInterface;
-use Sfynx\CoreBundle\Layers\Application\Response\Generalisation\Interfaces\ResponseHandlerInterface;
+use Sfynx\CoreBundle\Layers\Application\Response\Handler\Generalisation\Interfaces\ResponseHandlerInterface;
 use Sfynx\CoreBundle\Layers\Application\Response\Handler\ResponseHandler;
 use Sfynx\CoreBundle\Layers\Domain\Workflow\Observer\Query\OBEntityShowHandler;
 use Sfynx\CoreBundle\Layers\Domain\Workflow\Observer\Response\OBCreateShowBody;
@@ -53,7 +53,7 @@ class ShowController extends AbstractQueryController
 
         // 2. Implement the query workflow
         $Observer1 = new OBEntityShowHandler($this->request, $this->manager);
-        $workflowQuery = (new WorkflowQuery())
+        $workflowQuery = (new QueryWorkflow())
             ->attach($Observer1);
 
         // 3. Aapply the query workflow from the query

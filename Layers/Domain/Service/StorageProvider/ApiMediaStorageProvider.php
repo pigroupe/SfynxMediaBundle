@@ -87,7 +87,8 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
 
                     return true;
                 }
-                MediaFactoryException::assertException(['body' => 'Add'], 1);
+
+                return false;
             } else {
                 // Reupload case, remove the previous associated media
                 $response = $this->remove($media);
@@ -116,7 +117,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
             return true;
         }
 
-        MediaFactoryException::assertException(['body' => 'Add'], 1);
+        return false;
     }
 
     /**

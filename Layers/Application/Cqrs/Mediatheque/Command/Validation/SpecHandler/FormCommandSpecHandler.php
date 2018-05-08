@@ -4,7 +4,7 @@ namespace Sfynx\MediaBundle\Layers\Application\Cqrs\Mediatheque\Command\Validati
 use Sfynx\SpecificationBundle\Specification\Generalisation\InterfaceSpecification;
 use Sfynx\SpecificationBundle\Specification\Logical\XorSpec;
 use Sfynx\SpecificationBundle\Specification\Logical\TrueSpec;
-use Sfynx\CoreBundle\Layers\Application\Validation\Generalisation\SpecHandler\AbstractCommandSpecHandler;
+use Sfynx\CoreBundle\Layers\Application\Command\Validation\SpecHandler\Generalisation\AbstractCommandSpecHandler;
 use Sfynx\MediaBundle\Layers\Domain\Specification\Authorisation\SpecIsRoleAdmin;
 use Sfynx\MediaBundle\Layers\Domain\Specification\Authorisation\SpecIsRoleUser;
 use Sfynx\MediaBundle\Layers\Domain\Specification\Authorisation\SpecIsRoleAnonymous;
