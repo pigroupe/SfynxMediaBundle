@@ -21,6 +21,10 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension,
  */
 class SfynxMediaExtension extends Extension
 {
+    /**
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
     public function load(array $config, ContainerBuilder $container)
     {
         $loaderYaml = new Loader\YamlFileLoader($container, new FileLocator(realpath(__DIR__ . '/../Resources/config')));
@@ -71,7 +75,7 @@ class SfynxMediaExtension extends Extension
             $container->setParameter('sfynx.media.mediatheque.entitymanager', $config['mapping']['mediatheque_entitymanager']);
         }
 
-        /*
+        /**
          * Storage config parameter
          */
         if (isset($config['storage']['provider'])) {
@@ -88,9 +92,20 @@ class SfynxMediaExtension extends Extension
         }
 
         /**
+         * Formats creation config parameter
+         */
+        if (isset($config['asynchrone_format_creation_options'])) {
+            $container->setParameter("sfynx.media.format_creation", $config['asynchrone_format_creation_options']);
+            foreach ($config['asynchrone_format_creation_options'] as $name => $parameters) {
+                $container->setParameter("sfynx.media.format_creation.{$name}", $parameters);
+            }
+        }
+
+        /**
          * Formats config parameter
          */
         if (isset($config['formats'])) {
+            $container->setParameter("sfynx.media.formats", $config['formats']);
             foreach ($config['formats'] as $name => $parameters) {
                 $container->setParameter("sfynx.media.format.{$name}", $parameters);
             }
@@ -107,8 +122,11 @@ class SfynxMediaExtension extends Extension
         }
     }
 
+    /**
+     * @return string
+     */
     public function getAlias()
     {
-    	return 'sfynx_media';
+        return 'sfynx_media';
     }
 }

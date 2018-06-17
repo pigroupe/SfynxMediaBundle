@@ -4,6 +4,9 @@ namespace Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\EntityManagerInterface;
 
+use Sfynx\RestClientBundle\Http\Asynchronous;
+use Sfynx\RestClientBundle\Http\Response;
+use Sfynx\RestClientBundle\Http\Rest\RestApiClientBasicImplementor;
 use Sfynx\RestClientBundle\Http\Rest\RestApiClientInterface;
 use Sfynx\RestClientBundle\Exception\ApiHttpResponseException;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
@@ -60,19 +63,19 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
             && isset($metadata['form_name'])
             && isset($metadata['field_form'])
         ) {
-                $form_name = $metadata['form_name'];
-                $field_form = $metadata['field_form'];
+            $form_name = $metadata['form_name'];
+            $field_form = $metadata['field_form'];
 
-                if (null != ($_FILES[$form_name]['tmp_name'][$field_form]['uploadedFile'])) {
-                    $path = $_FILES[$form_name]['tmp_name'][$field_form]['uploadedFile'];
-                    $originalName = $_FILES[$form_name]['name'][$field_form]['uploadedFile'];
-                    $mimeType = $_FILES[$form_name]['type'][$field_form]['uploadedFile'];
-                    $size = $_FILES[$form_name]['size'][$field_form]['uploadedFile'];
-                    $error = $_FILES[$form_name]['error'][$field_form]['uploadedFile'];
+            if (null != ($_FILES[$form_name]['tmp_name'][$field_form]['uploadedFile'])) {
+                $path = $_FILES[$form_name]['tmp_name'][$field_form]['uploadedFile'];
+                $originalName = $_FILES[$form_name]['name'][$field_form]['uploadedFile'];
+                $mimeType = $_FILES[$form_name]['type'][$field_form]['uploadedFile'];
+                $size = $_FILES[$form_name]['size'][$field_form]['uploadedFile'];
+                $error = $_FILES[$form_name]['error'][$field_form]['uploadedFile'];
 
-                    $UploadedFile = new UploadedFile($path, $originalName, $mimeType, $size, $error);
-                    $media->setUploadedFile($UploadedFile);
-                }
+                $UploadedFile = new UploadedFile($path, $originalName, $mimeType, $size, $error);
+                $media->setUploadedFile($UploadedFile);
+            }
         }
 
         // 2. InsertUpdate case
@@ -92,10 +95,6 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
             } else {
                 // Reupload case, remove the previous associated media
                 $response = $this->remove($media);
-
-//                if ($this->em instanceof EntityManagerInterface) {
-//                    $this->em->getConnection()->delete($this->getOwningTable($entity), [$media->getId()]);
-//                }
             }
         }
 
@@ -123,7 +122,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
     /**
      * {@inheritdoc}
      */
-    public function create(Media & $media, ?array $metadata)
+    public function create(Media & $media, ?array $metadata): Response
     {
         return $this
             ->getRestClient()
@@ -142,13 +141,49 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                     $media->getUploadedFile()->getClientOriginalName()
                 )
             ])
-        ;
+            ;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function update(Media & $media, ?array $metadata)
+    public function createFromFormats(Media & $media, ?array $formats, ?array $formatsCreation): void
+    {
+        if ($media->isImageable()
+            && isset($formatsCreation['parallel_limit'])
+            && isset($formatsCreation['curlopt_timeout_ms'])
+            && isset($formatsCreation['timeout_wait_response'])
+        ) {
+            $urls = [];
+            foreach ($formats as $queries) {
+                $queries = array_filter($queries);
+                if (!empty($queries)) {
+                    $queries['response'] = 0;
+                    array_push($urls, RestApiClientBasicImplementor::addQueryString($media->getUrl(), $queries));
+                }
+            }
+
+            /*
+             * API in 3 s execution, with 0.05 Time, in seconds, to wait for a response.
+             * 10 requests  => CURLOPT_TIMEOUT_MS = 150
+             * 20 requests  => CURLOPT_TIMEOUT_MS = 250
+             * 100 requests => CURLOPT_TIMEOUT_MS = 1000
+             * n requests    => CURLOPT_TIMEOUT_MS = n * 15
+             */
+            $asyncRequest = new Asynchronous\AsyncRequest();
+            $asyncRequest->setParallelLimit($formatsCreation['parallel_limit']);
+            foreach ($urls as $url) {
+                $request = new Asynchronous\Request($url);
+                $asyncRequest->enqueue(new Asynchronous\Request($url, $formatsCreation['curlopt_timeout_ms']));
+            }
+            $asyncRequest->run($formatsCreation['timeout_wait_response']);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function update(Media & $media, ?array $metadata): Response
     {
         return $this
             ->getRestClient()
@@ -158,19 +193,19 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                     'description' => $media->getDescriptif()
                 ])
             ])
-        ;
+            ;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function remove(Media & $media)
+    public function remove(Media & $media): Response
     {
         $reference = $media->getProviderReference();
 
         return $this
-                ->getRestClient()
-                ->delete('/media/'.$reference)
+            ->getRestClient()
+            ->delete('/media/'.$reference)
             ;
     }
 

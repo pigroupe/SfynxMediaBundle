@@ -21,10 +21,3 @@ services:
             - '@sfynx_rest_client.api.media'
         tags:
             - { name: sfynx_media.storage_provider, alias: Sfynx Media }
-
-    sfynx.media.storage_provider.media:
-        class: 'Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\MediaStorageProvider'
-        public: true
-        arguments:
-        tags:
-            - { name: sfynx_media.storage_provider, alias: Sfynx Media }

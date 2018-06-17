@@ -99,7 +99,7 @@ class MediathequeType extends AbstractType
 //                ))
         ;
 
-        if ($this->_simpleLink == "all"){
+        if ($this->_simpleLink == "all") {
             $builder
                  ->add('enabled', CheckboxType::class, [
                     //'data'  => true,

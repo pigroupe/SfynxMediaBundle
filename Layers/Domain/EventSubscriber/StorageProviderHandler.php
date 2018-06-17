@@ -228,6 +228,17 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
             } catch (ApiHttpResponseException $e) {
                 MediaFactoryException::assertException(['message' => $e->getMessage(), 'body' => $e->getBody()], 2);
             }
+
+            if ($response
+                && $this->container->hasParameter('sfynx.media.formats')
+                && $this->container->hasParameter('fynx.media.format_creation')
+            ) {
+                $provider->createFromFormats(
+                    $entity,
+                    $this->container->getParameter('sfynx.media.formats'),
+                    $this->container->getParameter('sfynx.media.format_creation')
+                );
+            }
         }
     }
 
@@ -283,68 +294,68 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
      */
     protected function cropImage($eventArgs)
     {
-    	if ($this->container->get('request_stack')->getCurrentRequest()
+        if ($this->container->get('request_stack')->getCurrentRequest()
             && isset($_SERVER['REQUEST_URI'])
             && !empty($_SERVER['REQUEST_URI'])
         ) {
             $entityManager = $eventArgs->getEntityManager();
             $tab_post = $this->container->get('request_stack')->getCurrentRequest()->request->all();
             if (!empty($tab_post['img_crop']) && $tab_post['img_crop'] == '1') {
-                    $entity = $eventArgs->getEntity();
-                    $getMedia = "getMedia";
-                    $setMedia = "setMedia";
-                    if ($this->tokenStorage->isUsernamePasswordToken()
-                        && method_exists($entity, $getMedia)
-                        && method_exists($entity, $setMedia)
-                        && ($entity->$getMedia() instanceof MediathequeInterface)
-                    ) {
-                            $mediaPath = $this->container->get('sonata.media.twig.extension')->path($entity->$getMedia()->getImage()->getId(), 'reference');
-                            $src = $this->container->get('kernel')->getRootDir() . '/../web/' . $mediaPath;
-                            if (file_exists($src)) {
-                                    $extension =  pathinfo($src, PATHINFO_EXTENSION);
-                                    $mediaCrop = $this->container->get('sonata.media.twig.extension')->path($entity->$getMedia()->getImage()->getId(), $tab_post['img_name']);
-                                    $targ_w = $tab_post['img_width']; //$globals['tailleWidthEdito1'];
-                                    $targ_h = $tab_post['img_height'];
-                                    $jpeg_quality = $tab_post['img_quality'];
-                                    switch ($extension) {
-                                            case 'jpg':
-                                                    $img_r = imagecreatefromjpeg($src);
-                                                    break;
-                                            case 'jpeg':
-                                                    $img_r = imagecreatefromjpeg($src);
-                                                    break;
-                                            case 'gif':
-                                                    $img_r = imagecreatefromgif($src);
-                                                    break;
-                                            case 'png':
-                                                    $img_r = imagecreatefrompng($src);
-                                                    break;
-                                            default:
-                                                    echo "L'image n'est pas dans un format reconnu. Extensions autorisÃ©es : jpg, jpeg, gif, png";
-                                                    break;
-                                    }
-                                    $dst_r = imagecreatetruecolor($targ_w, $targ_h);
-                                    imagecopyresampled($dst_r, $img_r, 0, 0, $tab_post['x'], $tab_post['y'], $targ_w, $targ_h, $tab_post['w'], $tab_post['h']);
-                                    switch ($extension) {
-                                            case 'jpg':
-                                                    imagejpeg($dst_r, $this->container->get('kernel')->getRootDir() . '/../web/' . $mediaCrop, $jpeg_quality);
-                                                    break;
-                                            case 'jpeg':
-                                                    imagejpeg($dst_r, $this->container->get('kernel')->getRootDir() . '/../web/' . $mediaCrop, $jpeg_quality);
-                                                    break;
-                                            case 'gif':
-                                                    imagegif($dst_r, $this->container->get('kernel')->getRootDir() . '/../web/' . $mediaCrop);
-                                                    break;
-                                            case 'png':
-                                                    imagepng($dst_r, $this->container->get('kernel')->getRootDir() . '/../web/' . $mediaCrop);
-                                                    break;
-                                            default:
-                                                    echo "L'image n'est pas dans un format reconnu. Extensions autorisÃ©es : jpg, gif, png";
-                                                    break;
-                                    }
-                                    @chmod($this->container->get('kernel')->getRootDir() . '/../web/' . $mediaCrop, 0777);
-                            }
+                $entity = $eventArgs->getEntity();
+                $getMedia = "getMedia";
+                $setMedia = "setMedia";
+                if ($this->tokenStorage->isUsernamePasswordToken()
+                    && method_exists($entity, $getMedia)
+                    && method_exists($entity, $setMedia)
+                    && ($entity->$getMedia() instanceof MediathequeInterface)
+                ) {
+                    $mediaPath = $this->container->get('sonata.media.twig.extension')->path($entity->$getMedia()->getImage()->getId(), 'reference');
+                    $src = $this->container->get('kernel')->getRootDir() . '/../web/' . $mediaPath;
+                    if (file_exists($src)) {
+                        $extension =  pathinfo($src, PATHINFO_EXTENSION);
+                        $mediaCrop = $this->container->get('sonata.media.twig.extension')->path($entity->$getMedia()->getImage()->getId(), $tab_post['img_name']);
+                        $targ_w = $tab_post['img_width']; //$globals['tailleWidthEdito1'];
+                        $targ_h = $tab_post['img_height'];
+                        $jpeg_quality = $tab_post['img_quality'];
+                        switch ($extension) {
+                            case 'jpg':
+                                $img_r = imagecreatefromjpeg($src);
+                                break;
+                            case 'jpeg':
+                                $img_r = imagecreatefromjpeg($src);
+                                break;
+                            case 'gif':
+                                $img_r = imagecreatefromgif($src);
+                                break;
+                            case 'png':
+                                $img_r = imagecreatefrompng($src);
+                                break;
+                            default:
+                                echo "L'image n'est pas dans un format reconnu. Extensions autorisÃ©es : jpg, jpeg, gif, png";
+                                break;
+                        }
+                        $dst_r = imagecreatetruecolor($targ_w, $targ_h);
+                        imagecopyresampled($dst_r, $img_r, 0, 0, $tab_post['x'], $tab_post['y'], $targ_w, $targ_h, $tab_post['w'], $tab_post['h']);
+                        switch ($extension) {
+                            case 'jpg':
+                                imagejpeg($dst_r, $this->container->get('kernel')->getRootDir() . '/../web/' . $mediaCrop, $jpeg_quality);
+                                break;
+                            case 'jpeg':
+                                imagejpeg($dst_r, $this->container->get('kernel')->getRootDir() . '/../web/' . $mediaCrop, $jpeg_quality);
+                                break;
+                            case 'gif':
+                                imagegif($dst_r, $this->container->get('kernel')->getRootDir() . '/../web/' . $mediaCrop);
+                                break;
+                            case 'png':
+                                imagepng($dst_r, $this->container->get('kernel')->getRootDir() . '/../web/' . $mediaCrop);
+                                break;
+                            default:
+                                echo "L'image n'est pas dans un format reconnu. Extensions autorisÃ©es : jpg, gif, png";
+                                break;
+                        }
+                        @chmod($this->container->get('kernel')->getRootDir() . '/../web/' . $mediaCrop, 0777);
                     }
+                }
             } elseif(!empty($tab_post['img_crop']) && count($tab_post['img_crop']) >= 1){
                 if ($this->tokenStorage->isUsernamePasswordToken() ) {
                     foreach ($tab_post['img_crop'] as $media_id => $value) {
@@ -399,6 +410,6 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
                     } // endforeach
                 }
             }
-    	}
+        }
     }
 }

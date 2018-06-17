@@ -3,6 +3,7 @@ namespace Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\Generalisation
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use Sfynx\RestClientBundle\Http\Response;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 use Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\Generalisation\Interfaces\StorageProviderInterface;
 
@@ -45,22 +46,20 @@ abstract class AbstractStorageProvider implements StorageProviderInterface
         return $this->doAdd($media);
     }
 
-    /**
-     * Do add a media
-     *
-     * @param  Media $media
-     * @return boolean
-     */
+    /** {@inheritdoc} */
     abstract protected function doAdd(Media & $media);
 
     /** {@inheritdoc} */
-    abstract public function create(Media & $media, ?array $metadata);
+    abstract public function create(Media & $media, ?array $metadata): Response;
 
     /** {@inheritdoc} */
-    abstract public function update(Media & $media, ?array $metadata);
+    abstract public function createFromFormats(Media & $media, ?array $formats, ?array $formatsCreation): void;
 
     /** {@inheritdoc} */
-    abstract public function remove(Media & $media);
+    abstract public function update(Media & $media, ?array $metadata): Response;
+
+    /** {@inheritdoc} */
+    abstract public function remove(Media & $media): Response;
 
     /** {@inheritdoc} */
     abstract public function getMediaPublicUrl($reference);

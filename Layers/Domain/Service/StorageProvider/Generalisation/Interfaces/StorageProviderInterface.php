@@ -3,6 +3,7 @@ namespace Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\Generalisation
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use Sfynx\RestClientBundle\Http\Response;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 
 interface StorageProviderInterface
@@ -10,7 +11,7 @@ interface StorageProviderInterface
     /**
      * Get SourceName
      *
-     * @return MediaStorageProvider
+     * @return StorageProviderInterface
      */
     public function setEm(EntityManagerInterface $em);
 
@@ -41,26 +42,34 @@ interface StorageProviderInterface
      *
      * @param  Media $media
      * @param array $metadata
-     * @return string
+     * @return Response
      */
-    public function create(Media & $media, ?array $metadata);
+    public function create(Media & $media, ?array $metadata): Response;
+
+    /**
+     * @param  Media $media
+     * @param array|null $formats
+     * @param array|null $formatsCreation
+     * @return void
+     */
+    public function createFromFormats(Media & $media, ?array $formats, ?array $formatsCreation): void;
 
     /**
      * Do update a media
      *
      * @param  Media $media
      * @param array $metadata
-     * @return boolean
+     * @return Response
      */
-    public function update(Media & $media, ?array $metadata);
+    public function update(Media & $media, ?array $metadata): Response;
 
     /**
      * Do remove a media
      *
      * @param  string $reference
-     * @return boolean
+     * @return Response
      */
-    public function remove(Media & $media);
+    public function remove(Media & $media): Response;
 
     /**
      * Do get MediaPublic url
