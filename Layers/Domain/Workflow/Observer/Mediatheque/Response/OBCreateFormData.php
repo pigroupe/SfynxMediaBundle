@@ -2,6 +2,7 @@
 namespace Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Response;
 
 use stdClass;
+use Exception;
 use Sfynx\CoreBundle\Layers\Domain\Service\Manager\Generalisation\Interfaces\ManagerInterface;
 use Sfynx\CoreBundle\Layers\Domain\Service\Request\Generalisation\RequestInterface;
 use Sfynx\CoreBundle\Layers\Domain\Workflow\Observer\Generalisation\Response\AbstractCreateFormData;

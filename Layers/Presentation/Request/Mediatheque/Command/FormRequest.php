@@ -19,20 +19,38 @@ class FormRequest extends AbstractFormRequest
      * @var array $defaults List of default values for optional parameters.
      */
     protected $defaults = [
-        'entityId' => null,
-        'category' => '',
-        'noLayout' => '',
-        'status' => null,
-        'title' => null,
-        'descriptif' => null,
-        'url' => null,
-        'mediadelete' => false,
-        'copyright' => null,
-        'position' => null,
-        'publishedAt' => null,
-        'archived' => false,
-        'enabled' => true,
-        'image' => null
+        'GET' => [
+            'entityId' => null,
+            'category' => '',
+            'noLayout' => '',
+            'status' => null,
+            'title' => null,
+            'descriptif' => null,
+            'url' => null,
+            'copyright' => null,
+            'position' => null,
+            'publishedAt' => null,
+            'archived' => false,
+            'enabled' => true,
+            'mediadelete' => false,
+            'image' => null
+        ],
+        'GET' => [
+            'entityId' => null,
+            'category' => '',
+            'noLayout' => '',
+            'status' => null,
+            'title' => null,
+            'descriptif' => null,
+            'url' => null,
+            'copyright' => null,
+            'position' => null,
+            'publishedAt' => null,
+            'archived' => false,
+            'enabled' => false,
+            'mediadelete' => false,
+            'image' => null
+        ]
     ];
 
     /**
@@ -40,8 +58,8 @@ class FormRequest extends AbstractFormRequest
      */
     protected $required = [
         'GET'  => ['status'],
-        'POST' => ['status', 'title', 'enabled'],
-        'PUT'  => ['entityId', 'status', 'title', 'enabled']
+        'POST' => ['entityId', 'status', 'title', 'enabled'],
+        'PATCH' => 'POST'
     ];
 
     /**
@@ -50,13 +68,13 @@ class FormRequest extends AbstractFormRequest
     protected $allowedTypes = [
         'GET' => [
             'category' => ['string', 'null'],
-            'noLayout' => array('bool', 'null'),
+            'noLayout' => ['bool', 'null'],
             'status' => ['string'],
         ],
         'POST' => [
             'entityId' => ['int', 'null'],
             'category' => ['string', 'null'],
-            'noLayout' => array('bool', 'null'),
+            'noLayout' => ['bool', 'null'],
             'status' => ['string'],
             'title' => ['string'],
             'descriptif' => ['string', 'null'],
@@ -68,7 +86,8 @@ class FormRequest extends AbstractFormRequest
             'archived' => ['bool', 'null'],
             'enabled' => ['bool'],
             'image' => ['array', 'null']
-        ]
+        ],
+        'PATCH' => 'POST'
     ];
 
     /**

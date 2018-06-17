@@ -25,7 +25,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  * This is the class that validates and merges configuration from your app/config files
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
- * 
+ *
  * @category   SonataMedia
  * @package    DependencyInjection
  * @subpackage Configuration
@@ -45,16 +45,17 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('sfynx_media');
-        
+
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.
-        $this->addMapping($rootNode);
-        $this->addStorage($rootNode);
+        $this->addMappingConfig($rootNode);
+        $this->addStorageConfig($rootNode);
         $this->addCacheConfig($rootNode);
+        $this->addFormatCreationConfig($rootNode);
         $this->addFormatsConfig($rootNode);
         $this->addCropConfig($rootNode);
-        
+
         return $treeBuilder;
     }
 
@@ -68,7 +69,7 @@ class Configuration implements ConfigurationInterface
      *
      * @author Etienne de Longeaux <etienne.delongeaux@gmail.com>
      */
-    protected function addMapping(ArrayNodeDefinition $rootNode)
+    protected function addMappingConfig(ArrayNodeDefinition $rootNode)
     {
         $rootNode
         ->children()
@@ -99,7 +100,7 @@ class Configuration implements ConfigurationInterface
      *
      * @author Etienne de Longeaux <etienne.delongeaux@gmail.com>
      */
-    protected function addStorage(ArrayNodeDefinition $rootNode)
+    protected function addStorageConfig(ArrayNodeDefinition $rootNode)
     {
         $rootNode
         ->children()
@@ -135,6 +136,31 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
+     * Format creation config
+     *
+     * @param $rootNode \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition
+     *
+     * @return void
+     * @access protected
+     *
+     * @author Etienne de Longeaux <etienne.delongeaux@gmail.com>
+     */
+    protected function addFormatCreationConfig(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+        ->children()
+            ->arrayNode('asynchrone_format_creation_options')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('parallel_limit')->defaultValue(3)->end()
+                    ->scalarNode('curlopt_timeout_ms')->defaultValue(300)->end()
+                    ->scalarNode('timeout_wait_response')->defaultValue(0.05)->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    /**
      * Crop config
      *
      * @param ArrayNodeDefinition $rootNode An ArrayNodeDefinition instance
@@ -163,7 +189,7 @@ class Configuration implements ConfigurationInterface
      * Crop config
      *
      * @param ArrayNodeDefinition $rootNode An ArrayNodeDefinition instance
-     * 
+     *
      * @return void
      * @access protected
      * @author Etienne de Longeaux <etienne.delongeaux@gmail.com>
@@ -191,5 +217,5 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
     	->end();
-    }     
+    }
 }

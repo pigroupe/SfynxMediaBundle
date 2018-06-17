@@ -85,7 +85,6 @@ class FormController extends AbstractFormController
     /**
      * Displays a form to edit an existing user entity.
      *
-     * @param integer $id
      * @return Response
      * @access public
      */

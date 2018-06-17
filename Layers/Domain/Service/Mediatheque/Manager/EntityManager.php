@@ -63,7 +63,8 @@ class EntityManager extends AbstractManager implements ManagerInterface
             $entity->setCategory(
                 $this->getQueryRepository()->getEntityManager()->getReference(
                     '\PiApp\GedmoBundle\Layers\Domain\Entity\Category',
-                    $command->category)
+                    $command->category
+                )
             );
         }
         if (null !== $command->image) {
