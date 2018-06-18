@@ -35,7 +35,7 @@ class FormRequest extends AbstractFormRequest
             'mediadelete' => false,
             'image' => null
         ],
-        'GET' => [
+        'POST' => [
             'entityId' => null,
             'category' => '',
             'noLayout' => '',
