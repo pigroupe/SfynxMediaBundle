@@ -231,7 +231,7 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
 
             if ($response
                 && $this->container->hasParameter('sfynx.media.formats')
-                && $this->container->hasParameter('fynx.media.format_creation')
+                && $this->container->hasParameter('sfynx.media.format_creation')
             ) {
                 $provider->createFromFormats(
                     $entity,

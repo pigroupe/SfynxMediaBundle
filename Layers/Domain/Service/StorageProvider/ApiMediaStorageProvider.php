@@ -158,7 +158,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
             foreach ($formats as $queries) {
                 $queries = array_filter($queries);
                 if (!empty($queries)) {
-                    $queries['response'] = 0;
+                    $queries['noresponse'] = 1;
                     array_push($urls, RestApiClientBasicImplementor::addQueryString($media->getUrl(), $queries));
                 }
             }
@@ -193,7 +193,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                     'description' => $media->getDescriptif()
                 ])
             ])
-            ;
+        ;
     }
 
     /**
@@ -206,7 +206,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
         return $this
             ->getRestClient()
             ->delete('/media/'.$reference)
-            ;
+        ;
     }
 
     /**
