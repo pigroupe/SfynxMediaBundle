@@ -113,7 +113,8 @@ class MediathequeType extends AbstractType
                     'query_builder' => function (EntityRepository $er) use ($categories) {
                          return $categories;
                     },
-                    'placeholder' => 'pi.form.label.select.choose.category',
+//                    'placeholder' => 'pi.form.label.select.choose.category',
+                    'choice_value' => 'id',
                     'label'    => "pi.form.label.field.category",
                     'multiple'    => false,
                     'required'  => false,
@@ -168,6 +169,7 @@ class MediathequeType extends AbstractType
                         return $categories;
                     },
                     'placeholder' => 'pi.form.label.select.choose.category',
+                    'choice_value' => 'id',
                     'label'    => "pi.form.label.field.category",
                     'multiple'    => false,
                     'required'  => false,
