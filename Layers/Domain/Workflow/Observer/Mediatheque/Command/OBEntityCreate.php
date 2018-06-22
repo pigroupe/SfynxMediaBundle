@@ -5,14 +5,14 @@ use Exception;
 use Symfony\Component\Form\Extension\Core\DataTransformer\ValueToDuplicatesTransformer;
 
 use Sfynx\ToolBundle\Builder\RouteTranslatorFactoryInterface;
-use Sfynx\MediaBundle\Layers\Domain\Specification\SpecIsCommandCreatedWithStatus;
-use Sfynx\MediaBundle\Layers\Domain\Specification\SpecIsCommandCreatedWithCategory;
-use Sfynx\MediaBundle\Layers\Domain\Specification\SpecIsCommandCreatedWithNoLayout;
 use Sfynx\CoreBundle\Layers\Domain\Service\Manager\Generalisation\Interfaces\ManagerInterface;
 use Sfynx\CoreBundle\Layers\Domain\Service\Request\Generalisation\RequestInterface;
 use Sfynx\CoreBundle\Layers\Domain\Workflow\Observer\Generalisation\Command\AbstractEntityCreateHandler;
 use Sfynx\CoreBundle\Layers\Infrastructure\Exception\EntityException;
 use Sfynx\MediaBundle\Layers\Domain\Generalisation\Interfaces\UserInterface;
+use Sfynx\MediaBundle\Layers\Domain\Specification\SpecIsCommandCreatedWithStatus;
+use Sfynx\MediaBundle\Layers\Domain\Specification\SpecIsCommandCreatedWithCategory;
+use Sfynx\MediaBundle\Layers\Domain\Specification\SpecIsCommandCreatedWithNoLayout;
 
 /**
  * Class OBEntityCreate
@@ -36,9 +36,9 @@ class OBEntityCreate extends AbstractEntityCreateHandler
      * @param RequestInterface $request
      * @param RouteTranslatorFactoryInterface $router
      */
-    public function __construct(ManagerInterface $manager, RequestInterface $request, RouteTranslatorFactoryInterface $router)
+    public function __construct(ManagerInterface $manager, RequestInterface $request, RouteTranslatorFactoryInterface $router, bool $updateCommand = false)
     {
-        parent::__construct($manager, $request);
+        parent::__construct($manager, $request, $updateCommand);
         $this->router = $router;
     }
 

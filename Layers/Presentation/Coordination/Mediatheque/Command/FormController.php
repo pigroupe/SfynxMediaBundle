@@ -9,9 +9,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
+/// TEST DDD
 use Sfynx\ToolBundle\Builder\RouteTranslatorFactoryInterface;
 
-/// TEST DDD
 use Sfynx\CoreBundle\Layers\Presentation\Coordination\Generalisation\AbstractFormController;
 use Sfynx\CoreBundle\Layers\Presentation\Adapter\Command\CommandAdapter;
 use Sfynx\CoreBundle\Layers\Application\Response\Handler\Generalisation\Interfaces\ResponseHandlerInterface;
@@ -52,6 +52,8 @@ class FormController extends AbstractFormController
 {
     /** @var RouteTranslatorFactoryInterface */
     protected $routeFactory;
+    /** @var ManagerInterface */
+    protected $managerGedmoCategory;
 
     /**
      * UsersController constructor.
@@ -101,11 +103,9 @@ class FormController extends AbstractFormController
         );
 
         // 2. Implement the command workflow
-        $Observer1 = new OBMediathequeEntityEdit($this->manager, $this->request);
-        $Observer2 = new OBMediathequeEntityCreate($this->manager, $this->request, $this->routeFactory);
         $workflowCommand = (new CommandWorkflow())
-            ->attach($Observer1)
-            ->attach($Observer2);
+            ->attach(new OBMediathequeEntityEdit($this->manager, $this->request))
+            ->attach(new OBMediathequeEntityCreate($this->manager, $this->request, $this->routeFactory));
 
         // 3. Implement decorator to apply the command workflow from the command
         $this->commandHandler = new FormCommandHandler($workflowCommand);
@@ -122,27 +122,20 @@ class FormController extends AbstractFormController
 
         // 4. Implement the Response workflow
         $this->param->templating = 'SfynxMediaBundle:Mediatheque:edit.html.twig';
-        $Observer1 = new OBMediathequeCreateFormData($this->request, $this->managerGedmoCategory);
-        $Observer2 = new OBCreateEntityFormView($this->request, $this->formFactory, new MediathequeType(
-            $this->manager,
-            $this->routeFactory,
-            $this->translator
-        ));
-        $Observer3 = new OBInjectFormErrors($this->request, $this->translator);
-        $Observer4 = new OBCreateFormBody($this->request, $this->templating, $this->param);
-        $Observer5 = new OBCreateResponseHtml($this->request);
         $workflowHandler = (new WorkflowHandler())
-            ->attach($Observer1)
-            ->attach($Observer2)
-            ->attach($Observer3)
-            ->attach($Observer4)
-            ->attach($Observer5);
+            ->attach(new OBMediathequeCreateFormData($this->request, $this->managerGedmoCategory))
+            ->attach(new OBCreateEntityFormView($this->request, $this->formFactory, new MediathequeType(
+                $this->manager,
+                $this->routeFactory,
+                $this->translator
+            )))
+            ->attach(new OBInjectFormErrors($this->request, $this->translator))
+            ->attach(new OBCreateFormBody($this->request, $this->templating, $this->param))
+            ->attach(new OBCreateResponseHtml($this->request));
 
         // 5. Implement the responseHandler from the workflow
         $this->responseHandler = new ResponseHandler($workflowHandler);
         $responseHandlerResult = $this->responseHandler->process($commandHandlerResult);
-
-//        print_r($responseHandlerResult->getResponse()->getTargetUrl());exit;
 
         return $responseHandlerResult->getResponse();
     }
