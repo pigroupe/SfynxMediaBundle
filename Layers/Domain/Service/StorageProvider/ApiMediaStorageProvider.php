@@ -133,13 +133,20 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                 'description' => $media->getDescriptif(),
                 'metadata' => array_merge($metadata, [
                     'title' => $media->getTitle(),
-                    'description' => $media->getDescriptif()
+                    'description' => $media->getDescriptif(),
                 ]),
+                'signing' => [
+                    'connected' => $media->getConnected(),
+                    'roles' => $media->getRoles(),
+                    'usernames' => $media->getUsernames(),
+                    'rangeip' => $media->getRangeIp(),
+                ],
                 'media' => curl_file_create(
                     $media->getUploadedFile()->getPathName(),
                     $media->getUploadedFile()->getClientMimeType(),
                     $media->getUploadedFile()->getClientOriginalName()
-                )
+                ),
+                'enabled' => $media->getEnabled(),
             ])
             ;
     }

@@ -84,7 +84,7 @@ class Media implements MediaInterface
     /**
      * @ORM\Column(name="public_uri", type="string", nullable=true)
      */
-    protected $publicUri;
+    protected $publicUri = null;
 
     /**
      * @ORM\Column(name="mime_type", type="string", nullable=true)
@@ -114,7 +114,7 @@ class Media implements MediaInterface
     /**
      * @ORM\Column(type="json", nullable=true)
      */
-    protected $metadata;
+    protected $metadata = [];
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -127,13 +127,25 @@ class Media implements MediaInterface
     protected $uploadedFile;
 
     /**
-     * Constructor
+     * @var boolean
+     * @ORM\Column(type="boolean", options={"default" = true})
      */
-    public function __construct()
-    {
-        $this->publicUri = null;
-        $this->metadata  = [];
-    }
+    protected $connected = true;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    protected $rangeIp = [];
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    protected $roles = [];
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    protected $usernames = [];
 
     /**
      * Get id.
@@ -165,17 +177,22 @@ class Media implements MediaInterface
      */
     public function __toArray()
     {
-        return array(
+        return [
+            'enabled'           => $this->enabled,
             'publicUri'         => $this->publicUri,
             'mimeType'          => $this->mimeType,
             'providerName'      => $this->providerName,
             'providerReference' => $this->providerReference,
             'providerData'      => $this->providerData,
             'extension'         => $this->extension,
-            'metadata'          => $this->metadata,
             'createdAt'         => $this->createdAt,
             'updatedAt'         => $this->updatedAt,
-        );
+            'metadata'          => $this->metadata,
+            'signing'           => $this->signing,
+            'rangeip'           => $this->rangeip,
+            'roles'             => $this->roles,
+            'usernames'         => $this->usernames,
+        ];
     }
 
 //    /**
@@ -183,7 +200,7 @@ class Media implements MediaInterface
 //     *
 //     * @param string $name  The setter name.
 //     * @param mixed  $value The value to set.
-//     * @return Media
+//     * @return $this
 //     */
 //    public function __set($name, $value)
 //    {
@@ -244,15 +261,21 @@ class Media implements MediaInterface
     {
         $unserializedData = unserialize($data);
 
+        $this->enabled           = $unserializedData['enabled'];
+        $this->usernames         = $unserializedData['usernames'];
         $this->publicUri         = $unserializedData['publicUri'];
         $this->mimeType          = $unserializedData['mimeType'];
         $this->providerName      = $unserializedData['providerName'];
         $this->providerReference = $unserializedData['providerReference'];
         $this->providerData      = $unserializedData['providerData'];
         $this->extension         = $unserializedData['extension'];
-        $this->metadata          = $unserializedData['metadata'];
         $this->createdAt         = $unserializedData['createdAt'];
         $this->updatedAt         = $unserializedData['updatedAt'];
+        $this->metadata          = $unserializedData['metadata'];
+        $this->signing           = $unserializedData['signing'];
+        $this->rangeip           = $unserializedData['rangeip'];
+        $this->roles             = $unserializedData['roles'];
+        $this->usernames         = $unserializedData['usernames'];
     }
 
     /**
@@ -280,25 +303,25 @@ class Media implements MediaInterface
      */
     public function getPublicData()
     {
-        return array(
+        return [
             'providerName'      => $this->getProviderName(),
             'providerReference' => $this->getProviderReference(),
             'publicUri'         => $this->getPublicUri(),
             'extension'         => $this->getExtension(),
-            'mimeType'          => $this->getMimeType()
-        );
+            'mimeType'          => $this->getMimeType(),
+            'enabled'           => $this->getEnabled()
+        ];
     }
 
     /**
      * Set uploaded file.
      *
      * @param UploadedFile $uploadedFile
-     * @return Media
+     * @return $this
      */
     public function setUploadedFile(UploadedFile $uploadedFile)
     {
         $this->uploadedFile = $uploadedFile;
-
         return $this;
     }
 
@@ -333,7 +356,7 @@ class Media implements MediaInterface
      * Set title
      *
      * @param string $title
-     * @return Media
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -355,7 +378,7 @@ class Media implements MediaInterface
      * Set descriptif
      *
      * @param text $descriptif
-     * @return Media
+     * @return $this
      */
     public function setDescriptif ($descriptif)
     {
@@ -377,12 +400,11 @@ class Media implements MediaInterface
      * Returns public uri
      *
      * @param string $publicUri
-     * @return Media
+     * @return $this
      */
     public function setPublicUri($publicUri)
     {
         $this->publicUri = $publicUri;
-
         return $this;
     }
 
@@ -438,12 +460,11 @@ class Media implements MediaInterface
      * Set mimeType.
      *
      * @param string $mimeType
-     * @return Media
+     * @return $this
      */
     public function setMimeType($mimeType)
     {
         $this->mimeType = $mimeType;
-
         return $this;
     }
 
@@ -461,7 +482,7 @@ class Media implements MediaInterface
      * Set providerName.
      *
      * @param string $providerName
-     * @return Media
+     * @return $this
      */
     public function setProviderName($providerName)
     {
@@ -483,7 +504,7 @@ class Media implements MediaInterface
      * Set sourceName.
      *
      * @param string $sourceName
-     * @return Media
+     * @return $this
      */
     public function setSourceName($sourceName)
     {
@@ -505,12 +526,11 @@ class Media implements MediaInterface
      * Set providerReference.
      *
      * @param string $providerReference
-     * @return Media
+     * @return $this
      */
     public function setProviderReference($providerReference)
     {
         $this->providerReference = $providerReference;
-
         return $this;
     }
 
@@ -528,12 +548,11 @@ class Media implements MediaInterface
      * Set providerData.
      *
      * @param array $providerData
-     * @return Media
+     * @return $this
      */
     public function setProviderData($providerData)
     {
         $this->providerData = $providerData;
-
         return $this;
     }
 
@@ -548,26 +567,24 @@ class Media implements MediaInterface
     }
 
     /**
-     * Set extension.
-     *
-     * @param string $extension
-     * @return Media
-     */
-    public function setExtension($extension)
-    {
-        $this->extension = $extension;
-
-        return $this;
-    }
-
-    /**
      * Returns extension.
-     *
      * @return string
      */
     public function getExtension()
     {
         return $this->extension;
+    }
+    
+    /**
+     * Set extension.
+     *
+     * @param string $extension
+     * @return $this
+     */
+    public function setExtension($extension)
+    {
+        $this->extension = $extension;
+        return $this;
     }
 
     /**
@@ -580,10 +597,88 @@ class Media implements MediaInterface
 
     /**
      * @param mixed $metadata
+     * @return $this
      */
     public function setMetadata($metadata)
     {
         $this->metadata = $metadata;
+        return $this;
+    }
+
+    /**
+     * Set connected user information
+     *
+     * @param boolean $isConnected
+     * @return $this
+     */
+    public function setConnected($isConnected): Media
+    {
+        $this->connected = $isConnected;
+        return $this;
+    }
+
+    /**
+     * Get connected user information
+     *
+     * @return boolean
+     */
+    public function getConnected()
+    {
+        return $this->connected;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRangeIp()
+    {
+        return $this->rangeIp;
+    }
+
+    /**
+     * @param mixed $rangeIp
+     * @return $this
+     */
+    public function setRangeIp($rangeIp)
+    {
+        $this->rangeIp = $rangeIp;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param mixed $roles
+     * @return $this
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUsernames()
+    {
+        return $this->usernames;
+    }
+
+    /**
+     * @param array $usernames
+     * @return $this
+     */
+    public function setUsernames($usernames)
+    {
+        $this->usernames = $usernames;
+        return $this;
     }
 
 //    /**
@@ -591,7 +686,7 @@ class Media implements MediaInterface
 //     *
 //     * @param array|string $key
 //     * @param mixed        $value
-//     * @return Media
+//     * @return $this
 //     */
 //    public function setMetadata($key, $value)
 //    {

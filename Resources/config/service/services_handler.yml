@@ -1,5 +1,6 @@
 parameters:
     sfynx.media.event_subscriber.storage.handler.class: Sfynx\MediaBundle\Layers\Domain\EventSubscriber\StorageProviderHandler
+    sfynx.media.securing.signed.urls.class: Sfynx\MediaBundle\Layers\Domain\Service\Token\TokenService
 
 services:
     #
@@ -21,3 +22,15 @@ services:
             - '@sfynx_rest_client.api.media'
         tags:
             - { name: sfynx_media.storage_provider, alias: Sfynx Media }
+
+    #
+    # configuration of the JWT services
+    #
+    sfynx.media.securing.signed.urls:
+        class: '%sfynx.media.securing.signed.urls.class%'
+        arguments:
+           - "@lexik_jwt_authentication.encoder.default"
+           - "@lexik_jwt_authentication.key_loader.raw"
+           - '@sfynx.core.request.strategy'
+           - '@security.token_storage'
+           - { start: 0, expire: 3600, unique: false}

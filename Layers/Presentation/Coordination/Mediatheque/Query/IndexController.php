@@ -102,26 +102,21 @@ class IndexController extends AbstractQueryController
 
         // 1. Transform Request to Query.
         $adapter = new QueryAdapter(new IndexQuery());
-        $query = $adapter->createQueryFromRequest(
-            new IndexQueryRequest($this->request)
-        );
+        $query = $adapter->createQueryFromRequest(new IndexQueryRequest($this->request));
 
         $query->isServerSide = true ;
 
         // 2. Implement the query workflow
-        $Observer1 = new OBMediathequeIndexCreateQueryHandler($this->manager, $this->request);
-        $Observer2 = new OBMediathequeIndexCreateJsonQueryHandler($this->manager, $this->request);
-        $Observer3 = new OBMediathequeIndexFindEntitiesHandler(
-            $this->manager,
-            $this->request,
-            $this->authorizationChecker,
-            $this->roleFactory,
-            $this->routeFactory
-        );
         $workflowQuery = (new QueryWorkflow())
-            ->attach($Observer1)
-            ->attach($Observer2)
-            ->attach($Observer3);
+            ->attach(new OBMediathequeIndexCreateQueryHandler($this->manager, $this->request))
+            ->attach(new OBMediathequeIndexCreateJsonQueryHandler($this->manager, $this->request))
+            ->attach(new OBMediathequeIndexFindEntitiesHandler(
+                $this->manager,
+                $this->request,
+                $this->authorizationChecker,
+                $this->roleFactory,
+                $this->routeFactory
+            ));
 
         // 3. Aapply the query workflow from the query
         $queryHandlerResult = (new IndexQueryHandler($workflowQuery))->process($query);
@@ -131,22 +126,18 @@ class IndexController extends AbstractQueryController
 
         // 4. Implement the Response workflow
         $this->param->templating = 'SfynxMediaBundle:Mediatheque:index.html.twig';
-        $Observer1 = new OBCreateIndexBodyHtml($this->request, $this->templating, $this->param);
-        $Observer2 = new OBCreateResponseHtml($this->request);
-        $Observer3 = new OBMediathequeCreateIndexBodyJson(
-            $this->request,
-            $this->roleFactory,
-            $this->toolExtension,
-            $this->routeFactory,
-            $this->translator,
-            $this->param
-        );
-        $Observer4 = new OBCreateIndexResponseJson($this->request);
         $workflowHandler = (new WorkflowHandler())
-            ->attach($Observer1)
-            ->attach($Observer2)
-            ->attach($Observer3)
-            ->attach($Observer4);
+            ->attach(new OBCreateIndexBodyHtml($this->request, $this->templating, $this->param))
+            ->attach(new OBCreateResponseHtml($this->request))
+            ->attach(new OBMediathequeCreateIndexBodyJson(
+                $this->request,
+                $this->roleFactory,
+                $this->toolExtension,
+                $this->routeFactory,
+                $this->translator,
+                $this->param
+            ))
+            ->attach(new OBCreateIndexResponseJson($this->request));
 
         // 5. Implement the responseHandler from the workflow
         $this->responseHandler = new ResponseHandler($workflowHandler);
