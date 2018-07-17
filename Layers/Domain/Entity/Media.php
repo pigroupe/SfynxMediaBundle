@@ -112,6 +112,12 @@ class Media implements MediaInterface
     protected $extension;
 
     /**
+     * @var integer
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $quality = 95;
+
+    /**
      * @ORM\Column(type="json", nullable=true)
      */
     protected $metadata = [];
@@ -421,12 +427,29 @@ class Media implements MediaInterface
     /**
      * Returns url.
      *
-     * @param string $extension
+     * @param string|null $extension
+     * @param array $query
      * @return string
      */
-    public function getUrl($extension = null, $query = [])
+    public function getUrl(string $extension = null, array $query = []): string
     {
-        if (null === $this->getPublicUri()) {
+        $extension = (null === $extension) ? $this->getExtension() : $extension;
+
+        return self::getUrlValue($this->getPublicUri(), $extension, $query);
+    }
+
+    /**
+     * Returns url.
+     *
+     * @param string|null $extension
+     * @param array $query
+     * @param string|null $uri
+     * @return string
+     * @static
+     */
+    public static function getUrlValue(string $uri = null, string $extension = null, array $query = []): string
+    {
+        if (null === $uri) {
             return '';
         }
 
@@ -439,21 +462,15 @@ class Media implements MediaInterface
             }
         }
 
-        $url = sprintf(
-            '%s.%s',
-            $this->getPublicUri(),
-            null === $extension ? $this->getExtension() : $extension
-        );
-
-        if ($countValidQueries == 0) {
-            return $url;
+        if (null !== $uri  && null !== $extension) {
+            $uri = sprintf('%s.%s', $uri, $extension);
         }
 
-        return sprintf(
-            '%s?%s',
-            $url,
-            http_build_query($query)
-        );
+        if ($countValidQueries == 0) {
+            return $uri;
+        }
+
+        return sprintf('%s?%s', $uri, http_build_query($query));
     }
 
     /**
@@ -679,6 +696,32 @@ class Media implements MediaInterface
     {
         $this->usernames = $usernames;
         return $this;
+    }
+
+    /**
+     * Set quality
+     *
+     * @param integer $quality
+     * @return $this
+     */
+    public function setQuality($quality): Media
+    {
+        $this->quality = null;
+        if ($this->isImageable()) {
+            $this->quality = $quality;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get quality
+     *
+     * @return integer
+     */
+    public function getQuality()
+    {
+        return $this->quality;
     }
 
 //    /**

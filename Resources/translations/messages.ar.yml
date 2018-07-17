@@ -1,0 +1,13 @@
+pi.form.label.field.connexion_oblige: اتصال إلزامي
+pi.form.label.field.rule_permission: قواعد الإذن
+
+Resize: "Redimensionner"
+Scale: "Echelonner"
+Grayscale: "Niveau de gris"
+Rotate: "Pivoter"
+Width: "Largeur"
+Height: "Hauteur"
+Maxwidth: "Largeur max"
+Maxheight: "Hauteur max"
+Minwidth: "Largeur min"
+Minheight: "Hauteur min"

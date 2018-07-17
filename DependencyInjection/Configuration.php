@@ -52,6 +52,7 @@ class Configuration implements ConfigurationInterface
         $this->addMappingConfig($rootNode);
         $this->addStorageConfig($rootNode);
         $this->addCacheConfig($rootNode);
+        $this->addMediaConfig($rootNode);
         $this->addFormatCreationConfig($rootNode);
         $this->addFormatsConfig($rootNode);
         $this->addCropConfig($rootNode);
@@ -114,7 +115,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Admin config
+     * Cache config
      *
      * @param $rootNode ArrayNodeDefinition Class
      *
@@ -130,6 +131,37 @@ class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('media')->defaultValue('%kernel.root_dir%/cachesfynx/Media/')->cannotBeEmpty()->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    /**
+     * Media config
+     *
+     * @param $rootNode ArrayNodeDefinition Class
+     *
+     * @return void
+     * @access protected
+     * @author Etienne de Longeaux <etienne.delongeaux@gmail.com>
+     */
+    protected function addMediaConfig(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+        ->children()
+            ->arrayNode('media')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->integerNode('quality')->defaultValue(95)->end()
+                    ->arrayNode('token')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->integerNode('start')->defaultValue(0)->end()
+                            ->integerNode('expire')->defaultValue(3600)->end()
+                            ->booleanNode('unique')->defaultValue(false)->end()
+                            ->arrayNode('ipRange')->prototype('scalar')->end()->defaultValue([])->end()
+                        ->end()
+                    ->end()
                 ->end()
             ->end()
         ->end();

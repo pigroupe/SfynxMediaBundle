@@ -47,14 +47,11 @@ class ShowController extends AbstractQueryController
 
         // 1. Transform Request to Query.
         $adapter = new QueryAdapter(new ShowQuery());
-        $query = $adapter->createQueryFromRequest(
-            new ShowQueryRequest($this->request)
-        );
+        $query = $adapter->createQueryFromRequest(new ShowQueryRequest($this->request));
 
         // 2. Implement the query workflow
-        $Observer1 = new OBEntityShowHandler($this->request, $this->manager);
         $workflowQuery = (new QueryWorkflow())
-            ->attach($Observer1);
+            ->attach(new OBEntityShowHandler($this->request, $this->manager));
 
         // 3. Aapply the query workflow from the query
         $queryHandlerResult = (new ShowQueryHandler($workflowQuery))->process($query);
@@ -63,12 +60,10 @@ class ShowController extends AbstractQueryController
         }
 
         // 4. Implement the Response workflow
-        $this->param->templating = str_replace('::', ':', $this->getParamOrThrow('sfynx_auth_theme_login')) . 'Users:show.html.twig';
-        $Observer1 = new OBCreateShowBody($this->request, $this->templating, $this->param);
-        $Observer2 = new OBCreateResponseHtml($this->request);
+        $this->setParam('templating', 'SfynxMediaBundle:Mediatheque:show.html.twig');
         $workflowHandler = (new WorkflowHandler())
-            ->attach($Observer1)
-            ->attach($Observer2);
+            ->attach(new OBCreateShowBody($this->request, $this->templating, $this->param))
+            ->attach(new OBCreateResponseHtml($this->request));
 
         // 5. Implement the responseHandler from the workflow
         $this->responseHandler = new ResponseHandler($workflowHandler);

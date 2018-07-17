@@ -10,6 +10,9 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 use Lexik\Bundle\JWTAuthenticationBundle\Services\KeyLoader\KeyLoaderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+
+use Sfynx\RestClientBundle\Http\Rest\Generalisation\Interfaces\RestApiClientInterface;
+use Sfynx\RestClientBundle\Http\Response;
 use Sfynx\CoreBundle\Layers\Domain\Service\Request\Generalisation\RequestInterface;
 use Sfynx\MediaBundle\Layers\Application\Cqrs\Jwt\Command\JwtCommand;
 
@@ -31,6 +34,8 @@ class TokenService
     protected $tokenStorage;
     /** @var OptionsResolverInterface */
     protected $resolver;
+    /** @var RestApiClientInterface */
+    protected $restClient;
     /** @var array */
     protected $options;
 
@@ -53,8 +58,8 @@ class TokenService
         'algorithm' => self::ALGORITHM,
         'tenantId' => '',
         'kid' => null,
-        'url' => null,
-        'method' => 'POST'
+        'url' => '/token',
+        'method' => 'post'
     ];
 
     /**
@@ -110,15 +115,17 @@ class TokenService
      */
     protected static $strategies = [
         'api' => 'getSigningKey',
-        'local' => 'setSigningKey'
+        'locale' => 'setSigningKey'
     ];
 
     /**
      * TokenService constructor.
+     *
      * @param JWTEncoderInterface $jwtEncoder
      * @param KeyLoaderInterface $keyLoader
      * @param RequestInterface $request
      * @param TokenStorageInterface $tokenStorage
+     * @param null|RestApiClientInterface $restClient
      * @param array $options
      */
     public function __construct(
@@ -126,23 +133,25 @@ class TokenService
         KeyLoaderInterface $keyLoader,
         RequestInterface $request,
         TokenStorageInterface $tokenStorage,
+        RestApiClientInterface $restClient = null,
         array $options = []
     ) {
         $this->jwtEncoder = $jwtEncoder;
         $this->keyLoader = $keyLoader;
         $this->request = $request;
         $this->tokenStorage = $tokenStorage;
+        $this->restClient = $restClient;
         $this->options = $options;
     }
 
     /**
      * @param array $options
-     * @param string $strategy
+     * @param string $strategy = ['api', 'locale']
      * @parama bool $withClientIp
      * @param bool $withUserData
      * @return JwtCommand
      */
-    public function execute(array $options, string $strategy = 'local', bool $withClientIp = true, bool $withUserData = true): JwtCommand
+    public function execute(array $options, string $strategy = 'locale', bool $withClientIp = true, bool $withUserData = true): JwtCommand
     {
         $function = self::$strategies[$strategy];
         $options = \array_merge($this->options, $options);
@@ -177,6 +186,8 @@ class TokenService
     }
 
     /**
+     * Create jwt token with public key.
+     *
      * @param stdClass $parameters
      * @return JwtCommand
      */
@@ -196,38 +207,63 @@ class TokenService
     }
 
     /**
+     * Create jwt token from api.
+     *
      * @param stdClass $parameters
      * @return JwtCommand
      * @throws \Exception
      */
     protected function getSigningKey(stdClass $parameters): JwtCommand
     {
-        $header = "Content-Type: application/json\r\n" .
-            "X-TENANT-ID: " . $parameters->tenantId ;
+//        try {
+            $response = $this->create($parameters);
+//        } catch (UnavailableServiceException $e) {
+//            return $this->setSigningKey($parameters);
+//        }
 
-        $body = \array_merge($this->setBody($parameters), ['algo' => $parameters->algorithm]);
-
-        $opts = [
-            'http'=>[
-                'ignore_errors' => true,
-                'method' => $parameters->method,
-                'header' => $header,
-                'content'=> $body
-            ]
-        ];
-        $context = \stream_context_create($opts);
-        $response = \file_get_contents($parameters->url, false, $context);
-
-        $stdClassResponse =  $this->transform(\json_decode($response), false);
-        if(property_exists($stdClassResponse, 'kid')
-            && property_exists($stdClassResponse, 'token')
+        $body =  json_decode($response->getContent(), true);
+        if (!empty($body['kid'])
+            && !empty($body['token'])
         ) {
-            return new JwtCommand($stdClassResponse->kid, $stdClassResponse->token);
+            return new JwtCommand($body['kid'], $body['token']);
         }
         throw new \Exception('Signing Key not created !');
     }
 
     /**
+     * Get MediaClient
+     *
+     * @return RestApiClientInterface
+     */
+    protected function getRestClient()
+    {
+        return $this->restClient;
+    }
+
+    /**
+     * Create jwt token from api.
+     *
+     * @param stdClass $parameters
+     * @return Response
+     */
+    protected function create(stdClass $parameters): Response
+    {
+        $body = $this->setApiBody($parameters);
+        $method = $parameters->method;
+        $url = $parameters->url;
+        $headers = [
+            'Content-Type' => 'multipart/form-data',
+            'X-TENANT-ID' => $parameters->tenantId,
+        ];
+        
+        return $this
+            ->getRestClient()
+            ->$method($url, $body, $headers);
+    }
+
+    /**
+     * Set body of the jwt token.
+     *
      * @param stdClass $parameters
      * @return array
      */
@@ -243,10 +279,29 @@ class TokenService
                 ],
                 'rangeip' => $parameters->ipRange,
                 'unique' => $parameters->unique,
-                'x-tenant-id' => $parameters->tenantId,
                 'user' => $parameters->user,
                 'media' => $parameters->media
             ]
+        ];
+    }
+
+    /**
+     * Set body of the api to create jwt token.
+     *
+     * @param stdClass $parameters
+     * @return array
+     */
+    protected function setApiBody(stdClass $parameters): array
+    {
+        return [
+            'unique' => $parameters->unique,
+            'ipRange' => $parameters->ipRange,
+            'user' => $parameters->user,
+            'media' => $parameters->media,
+            'start' => $parameters->start,
+            'expire' => $parameters->expire,
+            'algorithm' => $parameters->algorithm,
+            'kid' => $parameters->kid,
         ];
     }
 

@@ -54,7 +54,7 @@ class OBEntityCreate extends AbstractEntityCreateHandler
             ->AndSpec(new SpecIsCommandCreatedWithCategory())
             ->AndSpec(new SpecIsCommandCreatedWithNoLayout())
         ;
-        if ($specs->isSatisfiedBy($object)) {
+        if ($specs->isSatisfiedBy($object) && null !== ($this->wfLastData->entity->getId())) {
             $this->wfLastData->url = $this->router->generate('sfynx_media_mediatheque_edit', [
                 'id' => $this->wfLastData->entity->getId(),
                 'NoLayout' => $this->wfCommand->getNoLayout(),

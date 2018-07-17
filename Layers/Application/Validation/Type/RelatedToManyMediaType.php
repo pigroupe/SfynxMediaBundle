@@ -9,6 +9,7 @@ namespace Sfynx\MediaBundle\Layers\Application\Validation\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type as Types;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RelatedToManyMediaType extends AbstractType
@@ -35,14 +36,20 @@ class RelatedToManyMediaType extends AbstractType
      */
     public function getParent()
     {
-        return 'collection';
+        return Types\CollectionType::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'sfynx_related_to_many_media';
+    }
+
+    // For Symfony 2.x
+    public function getName()
+    {
+        return $this->getBlockPrefix();
     }
 }

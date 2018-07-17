@@ -33,11 +33,7 @@ class RelatedToOneMediaType extends AbstractMediaType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['storage_provider'] = $options['storage_provider'];
-        $view->vars['storage_source'] = $options['storage_source'];
-        $view->vars['handler'] = $options['handler'];
-        $view->vars['context'] = $options['context'];
-        $view->vars['metadata'] = $options['metadata'];
+        $view->vars = array_merge($view->vars, $options);
     }
 
     /**

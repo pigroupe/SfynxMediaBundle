@@ -547,7 +547,6 @@ class MediathequeController extends abstractController
         $request = $this->getRequest();
 
         $form->bind($request);
-
         if ($form->isValid()) {
             $entity = $em->getRepository("SfynxMediaBundle:Mediatheque")->findOneByEntity($locale, $id, 'object');
             if (!$entity) {
@@ -567,6 +566,10 @@ class MediathequeController extends abstractController
         return $this->redirect($this->generateUrl('sfynx_media_mediatheque', array('NoLayout' => $NoLayout, 'category' => $category)));
     }
 
+    /**
+     * @param $id
+     * @return \Symfony\Component\Form\Form|\Symfony\Component\Form\FormInterface
+     */
     protected function createDeleteForm($id)
     {
         return $this->createFormBuilder(array('id' => $id))

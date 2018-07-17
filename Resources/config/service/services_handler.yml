@@ -20,6 +20,7 @@ services:
         public: true
         arguments:
             - '@sfynx_rest_client.api.media'
+            - '%sfynx.media.quality%'
         tags:
             - { name: sfynx_media.storage_provider, alias: Sfynx Media }
 
@@ -28,9 +29,11 @@ services:
     #
     sfynx.media.securing.signed.urls:
         class: '%sfynx.media.securing.signed.urls.class%'
+        public: true
         arguments:
            - "@lexik_jwt_authentication.encoder.default"
            - "@lexik_jwt_authentication.key_loader.raw"
            - '@sfynx.core.request.strategy'
            - '@security.token_storage'
-           - { start: 0, expire: 3600, unique: false}
+           - '@sfynx_rest_client.api.createtoken'
+           - '%sfynx.media.token%'

@@ -2,6 +2,13 @@ services:
     #
     # configuration of the forms
     #
+    sfynx_media.form_type.provider_choices:
+        class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\ProviderChoicesType'
+        public: true
+        arguments: ['%sfynx_media.config.storage_providers%']
+        tags:
+            - { name: form.type, alias: provider_choices }
+
     sfynx_media.form_type.related_to_one_media:
         class: 'Sfynx\MediaBundle\Layers\Application\Validation\Type\RelatedToOneMediaType'
         public: true

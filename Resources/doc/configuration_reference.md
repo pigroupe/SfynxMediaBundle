@@ -4,19 +4,19 @@ All available configuration options are listed below with their default values.
 
 ``` yaml
 #
-# SfynxmediaBundle configuration
-#       
+# SfynxMediaBundle configuration
+#
 sfynx_media:
     mapping:
-      provider: orm
-      media_class: Sfynx\MediaBundle\Layers\Domain\Entity\Media
-      media_entitymanager_command: doctrine.orm.entity_manager
-      media_entitymanager_query: doctrine.orm.entity_manager
-      mediatheque_class: Sfynx\MediaBundle\Layers\Domain\Entity\Mediatheque
-      mediatheque_entitymanager_command: doctrine.orm.entity_manager
-      mediatheque_entitymanager_query: doctrine.orm.entity_manager
+        provider: orm
+        media_class: Sfynx\MediaBundle\Layers\Domain\Entity\Media
+        media_entitymanager_command: doctrine.orm.entity_manager
+        media_entitymanager_query: doctrine.orm.entity_manager
+        mediatheque_class: Sfynx\MediaBundle\Layers\Domain\Entity\Mediatheque
+        mediatheque_entitymanager_command: doctrine.orm.entity_manager
+        mediatheque_entitymanager_query: doctrine.orm.entity_manager
     storage:
-      provider: sfynx.media.storage_provider.api_media
+        provider: sfynx.media.storage_provider.api_media
     cache_dir:
         media: '%kernel.cache_dir%/Media/'
     asynchrone_format_creation_options:
@@ -25,10 +25,12 @@ sfynx_media:
         timeout_wait_response: 0.05 # Time, in seconds, to wait for a response.
     formats:
         reference: {resize: 0}
-        slider-small: { resize: 1, width: 75, maxAge: 120}
-        slider-big: { resize: 1, width: 410, maxAge: 120}
-        galery-small: { resize: 1, width: 300, maxAge: 120}
-        galery-big: { resize: 1, width: 1000, maxAge: 120}
+        slider-small: { resize: 1, width: 75, maxAge: 31536000}
+        slider-big: { resize: 1, width: 410, maxAge: 31536000}
+        galery-small: { resize: 1, width: 300, maxAge: 31536000}
+        galery-big: { resize: 1, width: 1000, maxAge: 31536000}
+    quality:
+        default: 95
     crop:
         formats:
             0:

@@ -4,8 +4,12 @@ namespace Sfynx\MediaBundle\Layers\Domain\Service\Mediatheque\Manager;
 use Sfynx\CoreBundle\Layers\Application\Command\Generalisation\Interfaces\CommandInterface;
 use Sfynx\CoreBundle\Layers\Domain\Service\Manager\Generalisation\Interfaces\ManagerInterface;
 use Sfynx\CoreBundle\Layers\Domain\Service\Manager\Generalisation\AbstractManager;
+use Sfynx\CoreBundle\Layers\Domain\Repository\Command\CommandRepositoryInterface;
+use Sfynx\CoreBundle\Layers\Domain\Repository\Query\QueryRepositoryInterface;
 
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
+use Sfynx\MediaBundle\Layers\Domain\Repository\Command\MediathequeCommandRepositoryInterface;
+use Sfynx\MediaBundle\Layers\Domain\Repository\Query\MediathequeQueryRepositoryInterface;
 
 /**
  * Layout manager working with entities (Orm, Odm, Couchdb)
@@ -17,6 +21,26 @@ use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
  */
 class EntityManager extends AbstractManager implements ManagerInterface
 {
+    /**
+     * @param string|null $className
+     * @param array $args
+     * @return MediathequeQueryRepositoryInterface
+     */
+    public function getQueryRepository(string $className = null, array $args = []): QueryRepositoryInterface
+    {
+        return parent::getQueryRepository($className, $args);
+    }
+
+    /**
+     * @param string|null $className
+     * @param array $args
+     * @return MediathequeCommandRepositoryInterface
+     */
+    public function getCommandRepository(string $className = null, array $args = []): CommandRepositoryInterface
+    {
+        return parent::getCommandRepository($className, $args);
+    }
+
     /**
      * {@inheritDoc}
      */

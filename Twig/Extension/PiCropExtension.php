@@ -71,8 +71,8 @@ class PiCropExtension extends \Twig_Extension
      *
      * <code>
      * {% if entity.media.image is defined %}
-	 *   {{ file_form(entity.image, "sfynx_mediabundle_mediatype_file_image_binaryContent",  'reference', 'display: block; text-align:left;')|raw }}
-	 * {% endif %}
+     *   {{ file_form(entity.image, "sfynx_mediabundle_mediatype_file_image_binaryContent",  'reference', 'display: block; text-align:left;')|raw }}
+     * {% endif %}
      * </code>
      *
      * @author Etienne de Longeaux <etienne.delongeaux@gmail.com>
@@ -122,11 +122,11 @@ class PiCropExtension extends \Twig_Extension
      */
     public function getPictureFormFunction(MediaInterface $media, $nameForm, $format = 'reference', $style = "display: block; text-align:center;margin: 30px auto;", $idForm = "", $ClassName = '')
     {
-    	if ($media instanceof Media) {
+        if ($media instanceof Media) {
             $id = $media->getId();
             $mediaCrop = $this->getMediaUrlFunction($media, $format, false);
 
-            $img_balise = '<img title="' . $media->getTitle() . '" src="' . $mediaCrop . '?' . time() . '" width="auto" height="auto" alt="' . $media->getDescriptif() . '" style="' . $style . '" >';
+            $img_balise = '<img id="'.$idForm.'" title="' . $media->getTitle() . '" src="' . $mediaCrop . '?" width="auto" height="auto" alt="' . $media->getDescriptif() . '" style="' . $style . '" >';
 
             $content = "<div id='picture_" . $id . "_" . $format . "' class='".$format."  ".$ClassName."' > \n";
             $content .= $img_balise;
@@ -138,7 +138,7 @@ class PiCropExtension extends \Twig_Extension
             $content .= "</script> \n";
 
             return $content;
-    	}
+        }
     }
 
     /**
@@ -155,34 +155,34 @@ class PiCropExtension extends \Twig_Extension
      */
     public function getPictureCropFunction(MediaInterface $media, $format = "SfynxTemplateBundle:Template\\Crop:default.html.twig", $nameForm = "", $type = '', $options = [])
     {
-    	if ($format == "default") {
-    		$format = "SfynxTemplateBundle:Template\\Crop:default.html.twig";
-    	}
-    	if ($media instanceof Media) {
-    		$crop     = $this->container->getParameter('sfynx.media.crop');
-    		$globals  = $this->container->get('twig')->getGlobals();
+        if ($format == 'default') {
+            $format = "SfynxTemplateBundle:Template\\Crop:default.html.twig";
+        }
+        if ($media instanceof Media) {
+            $crop     = $this->container->getParameter('sfynx.media.crop');
+            $globals  = $this->container->get('twig')->getGlobals();
             if (!empty($type)
-                && (in_array($type, ['input', 'script']))
+                && in_array($type, ['input', 'script'])
             ) {
                 $templateContent = $this->container->get('twig')->loadTemplate($format);
-                $crop_input = ($templateContent->hasBlock("crop_input")
-                      ? $templateContent->renderBlock("crop_input", [
-                          "media"=>$media,
-                          "nameForm"=>$nameForm,
-                          "crop" => $crop,
-                      	  "options" => $options,
-                      	  "globals" => $globals
+                $crop_input = ($templateContent->hasBlock('crop_input')
+                      ? $templateContent->renderBlock('crop_input', [
+                          'media' => $media,
+                          'nameForm' => $nameForm,
+                          'crop' => $crop,
+                          'options' => $options,
+                          'globals' => $globals
                       ])
                       : "");
-                $crop_script = ($templateContent->hasBlock("crop_script")
-                      ? $templateContent->renderBlock("crop_script", [
-                          "media" =>$media,
-                          "nameForm" =>$nameForm,
-                          "crop" => $crop,
-                      	  "options" => $options,
-                      	  "globals" => $globals
+                $crop_script = ($templateContent->hasBlock('crop_script')
+                      ? $templateContent->renderBlock('crop_script', [
+                          'media' => $media,
+                          'nameForm' => $nameForm,
+                          'crop' => $crop,
+                          'options' => $options,
+                          'globals' => $globals
                       ])
-                      : "");
+                      : '');
                 if ($type == 'input') {
                     return $crop_input;
                 } elseif ($type == 'script') {
@@ -190,16 +190,16 @@ class PiCropExtension extends \Twig_Extension
                 }
             } else {
                 $response = $this->container->get('templating')->renderResponse($format, [
-                    "media" => $media,
-                    "nameForm" => $nameForm,
-                    "crop" => $crop,
-                    "options" => $options,
-                    "globals" => $globals
+                    'media' => $media,
+                    'nameForm' => $nameForm,
+                    'crop' => $crop,
+                    'options' => $options,
+                    'globals' => $globals
                 ]);
 
                 return $response->getContent();
             }
-    	}
+        }
     }
 
     /**
@@ -254,8 +254,9 @@ class PiCropExtension extends \Twig_Extension
         $is_true = false;
         if (is_array($names)) {
             foreach ($names as $k => $path) {
-                if ($route == $path)
+                if ($route == $path) {
                     $is_true = true;
+                }
             }
             if ($is_true) {
                 return $returnTrue;
@@ -282,30 +283,31 @@ class PiCropExtension extends \Twig_Extension
      */
     public function getMediaUrlFunction( MediaInterface $media, $format = "small", $cachable = true, $modifdate = false, $pattern = "media_")
     {
-        $url_public_media = '';
+        $params = $this->container->getParameter("sfynx.media.format.{$format}");
+        if (!$cachable) {
+            return $media->getUrl($media->getExtension(), $params);
+        }
+
+        $id = $format . $pattern . $media->getId() . '_' . $timestamp;
         $timestamp = 0;
         if ($modifdate instanceof \Datetime) {
             $timestamp = $modifdate->getTimestamp();
         } elseif (is_string($modifdate)) {
             $timestamp = $modifdate;
         }
-        try {
-            $params = $this->container->getParameter("sfynx.media.format.{$format}");
-            if (!$cachable) {
-                $url_public_media = $media->getUrl($media->getExtension(), $params);
-            } else {
-                $id = $media->getId();
-                $dossier = $this->container->getParameter("sfynx.media.cache_dir.media");
 
-                $this->container->get("sfynx.cache.filecache")->getClient()->setPath($dossier);
-                $url_public_media = $this->container->get("sfynx.cache.filecache")->get($format.$pattern.$id.'_'.$timestamp);
+        $this->container
+            ->get("sfynx.cache.filecache")
+            ->getClient()
+            ->setPath($this->container->getParameter("sfynx.media.cache_dir.media"));
+        $url_public_media = $this->container
+            ->get("sfynx.cache.filecache")
+            ->get($id);
 
-                if (!$url_public_media) {
-                    $url_public_media = $media->getUrl($media->getExtension(), $params);
-                    $this->container->get("sfynx.cache.filecache")->set($format.$pattern.$id.'_'.$timestamp, $url_public_media, 0);
-                }
-            }
-        } catch (\Exception $e) {}
+        if (!$url_public_media) {
+            $url_public_media = $media->getUrl($media->getExtension(), $params);
+            $this->container->get("sfynx.cache.filecache")->set($id, $url_public_media, 0);
+        }
 
         return $url_public_media;
     }

@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 
 use Sfynx\MediaBundle\Layers\Application\Validation\Type\AbstractMediaType;
@@ -19,52 +20,46 @@ class TransformableImageUploadType extends AbstractMediaType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
-
-        $this->setPreSetData($builder, $options);
-        $this->setPostSubmit($builder, $options);
-
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function(FormEvent $event) use ($options) {
+            function (FormEvent $event) use ($options) {
                 $form = $event->getForm();
                 $data = $event->getData();
                 $metadata = array(
-                    'cropper_ratio'          => null,
-                    'cropper_data'           => [],
-                    'cropper_container_data' => [],
-                    'cropper_image_data'     => [],
-                    'cropper_canvas_data'    => [],
-                    'cropper_crop_box_data'  => [],
+                    'cropper_ratio' => null,
+                    'cropper_data' => array(),
+                    'cropper_container_data' => array(),
+                    'cropper_image_data' => array(),
+                    'cropper_canvas_data' => array(),
+                    'cropper_crop_box_data' => array(),
                 );
-
                 if ($data instanceof Media) {
                     $metadata = $data->getMetadata();
                 }
-
                 $form
-                    ->add('cropper_ratio', 'hidden', array(
+                    ->add('cropper_ratio', Types\HiddenType::class, array(
                         'required' => false,
-                        'data'     => floatval($metadata['cropper_ratio']),
+                        'data' => floatval($metadata['cropper_ratio']),
                     ))
-                    ->add('cropper_data', 'tms_hidden_json', array(
+                    ->add('cropper_data', TmsHiddenJsonType::class, array(
                         'required' => false,
-                        'data'     => $metadata['cropper_data'],
+                        'data' => $metadata['cropper_data'],
                     ))
-                    ->add('cropper_container_data', 'tms_hidden_json', array(
+                    ->add('cropper_container_data', TmsHiddenJsonType::class, array(
                         'required' => false,
-                        'data'     => $metadata['cropper_container_data'],
+                        'data' => $metadata['cropper_container_data'],
                     ))
-                    ->add('cropper_image_data', 'tms_hidden_json', array(
+                    ->add('cropper_image_data', TmsHiddenJsonType::class, array(
                         'required' => false,
-                        'data'     => $metadata['cropper_image_data'],
+                        'data' => $metadata['cropper_image_data'],
                     ))
-                    ->add('cropper_canvas_data', 'tms_hidden_json', array(
+                    ->add('cropper_canvas_data', TmsHiddenJsonType::class, array(
                         'required' => false,
-                        'data'     => $metadata['cropper_canvas_data'],
+                        'data' => $metadata['cropper_canvas_data'],
                     ))
-                    ->add('cropper_crop_box_data', 'tms_hidden_json', array(
+                    ->add('cropper_crop_box_data', TmsHiddenJsonType::class, array(
                         'required' => false,
-                        'data'     => $metadata['cropper_crop_box_data'],
+                        'data' => $metadata['cropper_crop_box_data'],
                     ))
                 ;
             },
@@ -84,31 +79,52 @@ class TransformableImageUploadType extends AbstractMediaType
         $view->vars['reset_attr']       = $options['reset_attr'];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
         $resolver
-            ->setDefaults([
-                'container_width'  => 200,
+            ->setDefaults(array(
+                'container_width' => 200,
                 'container_height' => 200,
-                'zoom_attr'        => [],
-                'rotate_attr'      => [],
-                'reset_attr'       => array('value' => 'reset'),
-            ])
-            ->setAllowedTypes([
-                'container_width'  => array('integer'),
-                'container_height' => array('integer'),
-                'zoom_attr'        => array('array'),
-                'rotate_attr'      => array('array'),
-                'reset_attr'       => array('array'),
-            ])
+                'zoom_attr' => array(),
+                'rotate_attr' => array(),
+                'reset_attr' => array('value' => 'reset'),
+            ))
+            ->setAllowedTypes('container_width', array('integer'))
+            ->setAllowedTypes('container_height', array('integer'))
+            ->setAllowedTypes('zoom_attr', array('array'))
+            ->setAllowedTypes('rotate_attr', array('array'))
+            ->setAllowedTypes('reset_attr', array('array'))
         ;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @deprecated
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $this->configureOptions($resolver);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return 'sfynx_transformable_image_upload';
+    }
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated
      */
     public function getName()
     {
-        return 'sfynx_transformable_image_upload';
+        return $this->getBlockPrefix();
     }
 }

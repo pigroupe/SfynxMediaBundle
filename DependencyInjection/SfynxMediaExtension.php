@@ -85,9 +85,21 @@ class SfynxMediaExtension extends Extension
         /**
          * Cache config parameter
          */
-        if (isset($config['cache_dir'])){
+        if (isset($config['cache_dir'])) {
             if (isset($config['cache_dir']['media'])) {
                 $container->setParameter('sfynx.media.cache_dir.media', $config['cache_dir']['media']);
+            }
+        }
+
+        /**
+         * Media config parameter
+         */
+        if (isset($config['media'])) {
+            if (isset($config['media']['quality'])) {
+                $container->setParameter('sfynx.media.quality', $config['media']['quality']);
+            }
+            if (isset($config['media']['token'])) {
+                $container->setParameter('sfynx.media.token', $config['media']['token']);
             }
         }
 

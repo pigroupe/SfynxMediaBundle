@@ -7,16 +7,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Sfynx\ToolBundle\Builder\RouteTranslatorFactoryInterface;
-use Sfynx\ToolBundle\Twig\Extension\PiToolExtension;
-use Sfynx\ToolBundle\Twig\Extension\PiFormExtension;
-
-use Sfynx\AuthBundle\Infrastructure\Role\Generalisation\RoleFactoryInterface;
-use Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Query\OBIndexCreateQueryHandler as OBMediathequeIndexCreateQueryHandler;
-use Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Query\OBIndexCreateJsonQueryHandler as OBMediathequeIndexCreateJsonQueryHandler;
-use Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Query\OBIndexFindEntitiesHandler as OBMediathequeIndexFindEntitiesHandler;
-use Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Response\OBCreateIndexBodyJson as OBMediathequeCreateIndexBodyJson;
-
 use Sfynx\CoreBundle\Layers\Presentation\Coordination\Generalisation\AbstractQueryController;
 use Sfynx\CoreBundle\Layers\Presentation\Adapter\Query\QueryAdapter;
 use Sfynx\CoreBundle\Layers\Presentation\Request\Query\IndexQueryRequest;
@@ -35,6 +25,17 @@ use Sfynx\CoreBundle\Layers\Domain\Service\Manager\Generalisation\Interfaces\Man
 use Sfynx\CoreBundle\Layers\Domain\Service\Request\Generalisation\RequestInterface;
 use Sfynx\CoreBundle\Layers\Infrastructure\Exception\PresentationException;
 
+use Sfynx\ToolBundle\Builder\RouteTranslatorFactoryInterface;
+use Sfynx\ToolBundle\Twig\Extension\PiToolExtension;
+use Sfynx\ToolBundle\Twig\Extension\PiFormExtension;
+
+use Sfynx\AuthBundle\Infrastructure\Role\Generalisation\RoleFactoryInterface;
+use Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Query\OBIndexCreateQueryHandler as OBMediathequeIndexCreateQueryHandler;
+use Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Query\OBIndexCreateJsonQueryHandler as OBMediathequeIndexCreateJsonQueryHandler;
+use Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Query\OBIndexFindEntitiesHandler as OBMediathequeIndexFindEntitiesHandler;
+use Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Response\OBCreateIndexBodyJson as OBMediathequeCreateIndexBodyJson;
+use Sfynx\MediaBundle\Layers\Domain\Service\Token\TokenService;
+
 /**
  * Index controller.
  *
@@ -45,6 +46,8 @@ use Sfynx\CoreBundle\Layers\Infrastructure\Exception\PresentationException;
  */
 class IndexController extends AbstractQueryController
 {
+    /** @var TokenService */
+    protected $tokenService;
     /** @var  ResponseHandlerInterface */
     protected $responseHandler;
     /** @var RoleFactoryInterface */
@@ -59,6 +62,7 @@ class IndexController extends AbstractQueryController
     /**
      * UsersController constructor.
      *
+     * @param TokenService $tokenService
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param ManagerInterface $manager
      * @param RequestInterface $request
@@ -70,6 +74,7 @@ class IndexController extends AbstractQueryController
      * @param TranslatorInterface $translator
      */
     public function __construct(
+        TokenService $tokenService,
         AuthorizationCheckerInterface $authorizationChecker,
         ManagerInterface $manager,
         RequestInterface $request,
@@ -82,6 +87,7 @@ class IndexController extends AbstractQueryController
     ) {
         parent::__construct($authorizationChecker, $manager, $request, $templating, $formExtension);
 
+        $this->tokenService = $tokenService;
         $this->roleFactory = $roleFactory;
         $this->routeFactory = $routeFactory;
         $this->toolExtension = $toolExtension;
@@ -125,11 +131,12 @@ class IndexController extends AbstractQueryController
         }
 
         // 4. Implement the Response workflow
-        $this->param->templating = 'SfynxMediaBundle:Mediatheque:index.html.twig';
+        $this->setParam('templating', 'SfynxMediaBundle:Mediatheque:index.html.twig');
         $workflowHandler = (new WorkflowHandler())
             ->attach(new OBCreateIndexBodyHtml($this->request, $this->templating, $this->param))
             ->attach(new OBCreateResponseHtml($this->request))
             ->attach(new OBMediathequeCreateIndexBodyJson(
+                $this->tokenService,
                 $this->request,
                 $this->roleFactory,
                 $this->toolExtension,

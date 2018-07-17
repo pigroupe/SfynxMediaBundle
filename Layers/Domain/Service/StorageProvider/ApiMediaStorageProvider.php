@@ -4,10 +4,10 @@ namespace Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\EntityManagerInterface;
 
+use Sfynx\RestClientBundle\Http\Rest\Generalisation\Interfaces\RestApiClientInterface;
+use Sfynx\RestClientBundle\Http\Rest\RestApiClientBasicImplementor;
 use Sfynx\RestClientBundle\Http\Asynchronous;
 use Sfynx\RestClientBundle\Http\Response;
-use Sfynx\RestClientBundle\Http\Rest\RestApiClientBasicImplementor;
-use Sfynx\RestClientBundle\Http\Rest\RestApiClientInterface;
 use Sfynx\RestClientBundle\Exception\ApiHttpResponseException;
 use Sfynx\MediaBundle\Layers\Domain\Entity\Media;
 use Sfynx\MediaBundle\Layers\Domain\Service\StorageProvider\Generalisation\AbstractStorageProvider;
@@ -18,22 +18,26 @@ use Sfynx\MediaBundle\Layers\Infrastructure\Exception\Factory\MediaFactoryExcept
  *
  * @category   Sfynx\MediaBundle\Layers
  * @package    Domain
- * @subpackage EventSubscriber
+ * @subpackage Service\StorageProvider
  * @author   Etienne de Longeaux <etienne.delongeaux@gmail.com>
  */
 class ApiMediaStorageProvider extends AbstractStorageProvider
 {
     /** @var RestApiClientInterface */
     protected $restClient;
+    /** @var int */
+    protected $quality;
 
     /**
      * Constructor
      *
-     * @param RestApiClientInterface $restClient
+     * @param null|RestApiClientInterface $restClient
+     * @param int $quality
      */
-    public function __construct($restClient = null)
+    public function __construct(RestApiClientInterface $restClient = null, int $quality = 95)
     {
         $this->restClient = $restClient;
+        $this->quality = $quality;
     }
 
     /**
@@ -49,7 +53,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
     /**
      * {@inheritdoc}
      */
-    protected function doAdd(Media & $media)
+    protected function doAdd(Media &$media)
     {
         $metadata = $media->getMetadata();
         if (!is_array($media->getMetadata())
@@ -94,13 +98,15 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                 return false;
             } else {
                 // Reupload case, remove the previous associated media
-                $response = $this->remove($media);
+                try {
+                    $response = $this->remove($media);
+                } catch (ApiHttpResponseException $e) {
+                }
             }
         }
-
+        
         if (null !== $media->getUploadedFile()) {
             $response = $this->create($media, $metadata);
-
             $apiMedia = json_decode($response->getContent(), true);
 
             $media->setProviderData($apiMedia);
@@ -109,6 +115,10 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
             $media->setExtension($apiMedia['extension']);
             $media->setPublicUri($apiMedia['publicUri']);
 
+            // set default quality value if not register
+            if (null === $media->getQuality()) {
+                $media->setQuality($this->quality);
+            }
             if ($this->em instanceof EntityManagerInterface) {
                 $this->em->getConnection()->insert($this->getOwningTable($entity), $media->__toArray());
             }
@@ -125,30 +135,30 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
     public function create(Media & $media, ?array $metadata): Response
     {
         return $this
-            ->getRestClient()
-            ->post('/media', [
-                'source' => $media->getSourceName(),
-                'storage_provider' => $media->getProviderName(),
-                'name' => $media->getUploadedFile()->getClientOriginalName(),
+        ->getRestClient()
+        ->post('/media', [
+            'source' => $media->getSourceName(),
+            'storage_provider' => $media->getProviderName(),
+            'name' => $media->getUploadedFile()->getClientOriginalName(),
+            'description' => $media->getDescriptif(),
+            'quality' => $media->getQuality(),
+            'metadata' => array_merge($metadata, [
+                'title' => $media->getTitle(),
                 'description' => $media->getDescriptif(),
-                'metadata' => array_merge($metadata, [
-                    'title' => $media->getTitle(),
-                    'description' => $media->getDescriptif(),
-                ]),
-                'signing' => [
-                    'connected' => $media->getConnected(),
-                    'roles' => $media->getRoles(),
-                    'usernames' => $media->getUsernames(),
-                    'rangeip' => $media->getRangeIp(),
-                ],
-                'media' => curl_file_create(
-                    $media->getUploadedFile()->getPathName(),
-                    $media->getUploadedFile()->getClientMimeType(),
-                    $media->getUploadedFile()->getClientOriginalName()
-                ),
-                'enabled' => $media->getEnabled(),
-            ])
-            ;
+            ]),
+            'signing' => [
+                'connected' => $media->getConnected(),
+                'roles' => $media->getRoles(),
+                'usernames' => $media->getUsernames(),
+                'rangeip' => $media->getRangeIp(),
+            ],
+            'media' => curl_file_create(
+                $media->getUploadedFile()->getPathName(),
+                $media->getUploadedFile()->getClientMimeType(),
+                $media->getUploadedFile()->getClientOriginalName()
+            ),
+            'enabled' => $media->getEnabled(),
+        ]);
     }
 
     /**
@@ -198,22 +208,20 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                 'metadata' => array_merge($metadata, [
                     'title' => $media->getTitle(),
                     'description' => $media->getDescriptif()
-                ])
             ])
-        ;
+        ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function remove(Media & $media): Response
+    public function remove(Media &$media): Response
     {
         $reference = $media->getProviderReference();
 
         return $this
             ->getRestClient()
-            ->delete('/media/'.$reference)
-        ;
+            ->delete(sprintf('/media/%s', $reference));
     }
 
     /**

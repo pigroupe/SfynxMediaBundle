@@ -25,16 +25,13 @@ class OBIndexCreateQueryHandler extends AbstractIndexCreateQueryHandler
     protected function process(): void
     {
         try {
-//            print_r(($this->manager->getQueryRepository()->find('046e0589-637d-482f-a56f-fd552f55fb02'))); # 046e0589-637d-482f-a56f-fd552f55fb02
-//            exit;
-
-            $this->wfLastData->query = $this->manager->getQueryRepository()->formAllByCategory(
+            $this->wfLastData->query = $this->manager->getQueryRepository('FindAllByCategoryQueryBuilder', [
                 $this->wfQuery->getCategory(),
                 null,
                 '',
                 '',
                 false
-            );
+            ])->getResultBuilder();
         } catch (Exception $e) {
             throw EntityException::NotFoundEntity($this->entityName);
         }
