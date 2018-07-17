@@ -30,7 +30,7 @@ interface MediaInterface
      * @param string $extension
      * @return string
      */
-    public function getUrl($extension = null, $query = []);
+    public function getUrl(string $extension = null, array $query = []): string;
 
     /**
      * isImageable

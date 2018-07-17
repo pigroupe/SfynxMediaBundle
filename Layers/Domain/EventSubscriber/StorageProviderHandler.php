@@ -228,7 +228,7 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
             } catch (ApiHttpResponseException $e) {
                 MediaFactoryException::assertException(['message' => $e->getMessage(), 'body' => $e->getBody()], 2);
             }
-
+            
             if ($response
                 && $this->container->hasParameter('sfynx.media.formats')
                 && $this->container->hasParameter('sfynx.media.format_creation')

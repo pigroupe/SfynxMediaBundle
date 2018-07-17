@@ -9,6 +9,10 @@ parameters:
     # Reposioty names
     sfynx.media.repository.mediatheque.orm.command.class: Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Command\Orm\MediathequeRepository
     sfynx.media.repository.mediatheque.orm.query.class: Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Query\Orm\MediathequeRepository
+    # QueryBuilder names
+    sfynx.media.repository.mediatheque.orm.query.querybuilder:
+        FindAllByCategoryQueryBuilder: 'Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Query\Orm\Mediatheque\QueryBuilder\FindAllByCategoryQueryBuilder'
+    sfynx.media.repository.mediatheque.orm.command.querybuilder: []
 
 services:
     #

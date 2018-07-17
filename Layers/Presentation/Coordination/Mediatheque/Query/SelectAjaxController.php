@@ -75,12 +75,16 @@ class SelectAjaxController extends AbstractSelectAjaxController
             if (($this->status == 'image')
                 && ($obj->getImage() instanceof Media)
             ) {
-                $content .= "<img width='100px' src=\"".$obj->getImage()->getUrl($obj->getImage()->getExtension())."\" alt='Photo'/>";
+                $content .= "<img width='40px' src='".$obj->getImage()->getUrl(null, [
+                    'maxAge' => 31536000,
+                    'resize' => 1,
+                    'width' => 100,
+                ])."' alt='Photo'/>";
             }
-            $tab[] = array(
+            $tab[] = [
                 'id'   => $obj->getId(),
-                'text' => $this->twig->render($content, [])
-            );
+                'text' => $this->twig->render($content)
+            ];
         }
 
         return $tab;

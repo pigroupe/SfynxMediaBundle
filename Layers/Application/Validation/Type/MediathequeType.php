@@ -118,6 +118,9 @@ class MediathequeType extends AbstractType
                     'label'    => "pi.form.label.field.category",
                     'multiple'    => false,
                     'required'  => false,
+                    'label_attr' => [
+                        'class'=> 'taxonomies_collection',
+                    ],
                     "attr" => array(
                         "class"=>"pi_simpleselect ajaxselect", // ajaxselect
                         "data-url" => $this->routeFactory->generate("admin_gedmo_category_selectentity_ajax", array('type'=> Category::TYPE_MEDIA)),
@@ -173,6 +176,9 @@ class MediathequeType extends AbstractType
                     'label'    => "pi.form.label.field.category",
                     'multiple'    => false,
                     'required'  => false,
+                    'label_attr' => [
+                        'class'=> 'taxonomies_collection',
+                    ],
                     "attr" => array(
                         "class" => "pi_simpleselect ajaxselect", // ajaxselect
                         "data-url" => $this->routeFactory->generate("admin_gedmo_category_selectentity_ajax", array('type'=> Category::TYPE_MEDIA)),
@@ -191,43 +197,43 @@ class MediathequeType extends AbstractType
                 ])
             ;
         } elseif ( ($this->_simpleLink == "simpleDescriptif") || ($this->_simpleLink == "simpleWithIcon") ) {
-        	$builder
-        	->add('enabled', HiddenType::class, [
-        			'data'  => true,
-        			"label_attr" => array(
+            $builder
+            ->add('enabled', HiddenType::class, [
+                    'data'  => true,
+                    "label_attr" => array(
                         "class"=> $this->_class,
-        			),
-        	])
-        	->add('title', TextType::class, [
-        			'label'            => "pi.form.label.field.title",
-        			"label_attr" => array(
+                    ),
+            ])
+            ->add('title', TextType::class, [
+                    'label'            => "pi.form.label.field.title",
+                    "label_attr" => array(
                         "class"=> $this->_class,
-        			),
-        			'required' => true,
-        	])
-        	->add('descriptif', TextareaType::class, [
-        			'label'    => 'pi.form.label.field.description',
-        			"label_attr" => array(
-        					"class"=>"content_collection",
-        			),
-        	])
-        	;
+                    ),
+                    'required' => true,
+            ])
+            ->add('descriptif', TextareaType::class, [
+                    'label'    => 'pi.form.label.field.description',
+                    "label_attr" => array(
+                            "class"=>"content_collection",
+                    ),
+            ])
+            ;
         } elseif ($this->_simpleLink == "crop") {
-        	$builder
-        	->add('enabled', HiddenType::class, [
-        			'data'  => true,
+            $builder
+            ->add('enabled', HiddenType::class, [
+                    'data'  => true,
                 "label_attr" => [
                     "class"=> $this->_class,
                 ],
-        	])
-        	->add('title', TextType::class, [
+            ])
+            ->add('title', TextType::class, [
                 'label'      => "pi.form.label.field.title",
                 "label_attr" => [
                     "class"=> $this->_class,
                 ],
                 'required'    => true,
-        	])
-        	;
+            ])
+            ;
         } elseif (($this->_simpleLink == "simpleLink")
             || ($this->_simpleLink == "hidden")
             || ($this->_simpleLink == "simple")
@@ -258,10 +264,10 @@ class MediathequeType extends AbstractType
                      ],
                      'context' => $this->_context,
                      'label' => $this->_labelLink,
-                     "label_attr" => array(
+                     "label_attr" => [
                          "class"=> $this->_class,
                          "style"=> $style,
-                     ),
+                     ],
                      "attr"     => ["style"=> $style],
                      'required' => false,
              ]);
@@ -286,25 +292,25 @@ class MediathequeType extends AbstractType
                      'required'  => false,
              ]);
              if ($this->_simpleLink == "simpleWithIcon") {
-             	if ($this->_labelLink == "") $this->_labelLink = 'miniature';
-             	if ($this->_context == "")    $this->_context        = 'default';
-             	$builder->add('image2', RelatedToOneMediaType::class, [
+                 if ($this->_labelLink == "") $this->_labelLink = 'miniature';
+                 if ($this->_context == "")    $this->_context        = 'default';
+                 $builder->add('image2', RelatedToOneMediaType::class, [
                         'storage_provider' => 'gaufrette_storage_gallery_azure',
                         'storage_source' => 'mediatheque/picture',
-             	        'handler' => 'sfynx.media.provider.picture',
+                         'handler' => 'sfynx.media.provider.picture',
                         'metadata' => [
                             'form_name' => 'sfynx_mediabundle_mediatype_picture',
                             'field_form' => 'image'
                         ],
-             			'context' => $this->_context,
-             			'label' => "pi.form.label.media.picture.miniature",
-             			"label_attr" => [
+                         'context' => $this->_context,
+                         'label' => "pi.form.label.media.picture.miniature",
+                         "label_attr" => [
                             "class"=> $this->_class,
                             "style"=> $style,
-             			],
-             			"attr"    => ["style"=> $style],
-             			'required'  => false,
-             	]);
+                         ],
+                         "attr"    => ["style"=> $style],
+                         'required'  => false,
+                 ]);
              }
          } elseif ($this->_status == "youtube") {
              if ($this->_labelLink == "") $this->_labelLink = 'pi.form.label.media.youtube';
@@ -355,12 +361,12 @@ class MediathequeType extends AbstractType
          }
 
          $builder
-         ->add('copyright', TextType::class, [
-         		"label"     => "Crédit photo",
-         		"label_attr" => array(
-                    "class"=> $this->_class,
-         		),
-         		'required' => false,
+         ->add('copyright', TextareaType::class, [
+                 "label"     => "Crédit photo",
+                 "label_attr" => [
+                    "class"=> 'licence_collection',
+                 ],
+                 'required' => false,
          ]);
     }
 

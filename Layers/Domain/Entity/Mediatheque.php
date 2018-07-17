@@ -160,7 +160,8 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
     /**
      * Get magic method
      */
-    public function __get($property) {
+    public function __get($property)
+    {
         if (property_exists($this, $property)) {
             return $this->$property;
         }
@@ -169,7 +170,8 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
     /**
      * Set magic method
      */
-    public function __set($property, $value) {
+    public function __set($property, $value) 
+    {
         if (property_exists($this, $property)) {
             $this->$property = $value;
         }
@@ -194,25 +196,29 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
      */
     public function __toString()
     {
-    	if (isset($_GET['_locale']) && !empty($_GET['_locale'])) {
+        if (isset($_GET['_locale']) && !empty($_GET['_locale'])) {
             $locale = $_GET['_locale'];
-    	} else {
+        } else {
             $locale = "fr_FR";
-    	}
-    	$content = $this->getId();
-    	$title = $this->translate($locale)->getTitle();
-    	$cat = $this->getCategory();
-    	if ($title) {
+        }
+        $content = $this->getId();
+        $title = $this->translate($locale)->getTitle();
+        $cat = $this->getCategory();
+        if ($title) {
             $content .=  " - " .$title;
-    	}
-    	if (!(null === $cat)) {
+        }
+        if (!(null === $cat)) {
             $content .=  ' ('. $cat->getName() .')';
-    	}
-    	if (($this->getStatus() == 'image')
+        }
+        if (($this->getStatus() == 'image')
                 && ($this->getImage() instanceof Media)
         ) {
-            $content .= "<img width='100px' src=\"{{ media_url('".$this->getImage()->getId()."', 'small', true, '".$this->getUpdatedAt()->format('Y-m-d H:i:s')."', 'gedmo_media_') }}\" alt='Photo'/>";
-    	}
+            $content .= "<img width='10px' src='".$this->getImage()->getUrl(null, [
+                'maxAge' => 31536000,
+                'resize' => 1,
+                'width' => 100,
+            ])."' alt='Photo'/>";
+        }
 
         return (string) $content;
     }
@@ -297,8 +303,8 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
      */
     public function setDescriptif ($descriptif)
     {
-    	$this->descriptif = $descriptif;
-    	return $this;
+        $this->descriptif = $descriptif;
+        return $this;
     }
 
     /**
@@ -308,7 +314,7 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
      */
     public function getDescriptif ()
     {
-    	return $this->descriptif;
+        return $this->descriptif;
     }
 
     /**
@@ -359,8 +365,8 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
      */
     public function setImage2($image2)
     {
-    	$this->image2     = $image2;
-    	return $this;
+        $this->image2     = $image2;
+        return $this;
     }
 
     /**
@@ -370,7 +376,7 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
      */
     public function getImage2()
     {
-    	return $this->image2;
+        return $this->image2;
     }
 
     /**
@@ -399,7 +405,7 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
      */
     public function setCopyright($copyright)
     {
-    	$this->copyright = $copyright;
+        $this->copyright = $copyright;
     }
 
     /**
@@ -407,6 +413,6 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
      */
     public function getCopyright()
     {
-    	return $this->copyright;
+        return $this->copyright;
     }
 }

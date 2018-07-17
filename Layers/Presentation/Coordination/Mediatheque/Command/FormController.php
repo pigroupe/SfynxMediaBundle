@@ -127,7 +127,8 @@ class FormController extends AbstractFormController
             ->attach(new OBCreateEntityFormView($this->request, $this->formFactory, new MediathequeType(
                 $this->manager,
                 $this->routeFactory,
-                $this->translator
+                $this->translator,
+                'file'
             )))
             ->attach(new OBInjectFormErrors($this->request, $this->translator))
             ->attach(new OBCreateFormBody($this->request, $this->templating, $this->param))

@@ -1,0 +1,545 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{% block related_to_many_media_widget %}
+    {% spaceless %}
+        {{ block('collection_widget') }}
+    {% endspaceless %}
+    <script type="text/javascript">
+        function getJquery(callback) {
+            if (!window.jQuery) {
+                if (!document.getElementById('tms_jquery')) {
+                    var sJquery = document.createElement("script");
+                    sJquery.id = "tms_jquery";
+                    sJquery.src = "{{ asset('bundles/sfynxmedia/js/jquery-1.11.3.min.js') }}";
+                    sJquery.type = "text/javascript";
+
+                    var head = document.getElementsByTagName('head')[0];
+                    head.appendChild(sJquery);
+                } else {
+                    var sJquery = document.getElementById('tms_jquery');
+                }
+
+                var onload = sJquery.onload;
+                sJquery.onload = sJquery.onreadystatechange = function() {
+                    if (typeof onload == 'function') {
+                        onload();
+                    }
+                    callback(window.jQuery);
+                }
+            } else {
+                callback(window.jQuery);
+            }
+        };
+
+        getJquery(function($) {
+            var collectionHolder = $('.tms_media_client__related_to_many_media');
+            var $addMediaLink = $('<a href="#" class="btn btn-default add_media_link">Add media</a>');
+            var $newLink = $('<div></div>').append($addMediaLink);
+
+            function addMediaForm(collectionHolder, $newLink) {
+                var prototype = collectionHolder.attr('data-prototype');
+                var newForm = prototype.replace(/__name__/g, collectionHolder.children().length);
+                var $newFormDiv = $('<div></div>').append(newForm);
+                $newLink.before($newFormDiv);
+                addMediaFormDeleteLink($newFormDiv);
+            }
+
+            function addMediaFormDeleteLink($mediaFormDiv) {
+                var $removeFormA = $('<a href="#" class="btn btn-default">Delete media</a>');
+                $mediaFormDiv.append($removeFormA);
+
+                $removeFormA.on('click', function(e) {
+                    e.preventDefault();
+                    $mediaFormDiv.remove();
+                });
+            }
+
+            collectionHolder.append($newLink);
+
+            $addMediaLink.on('click', function(e) {
+                e.preventDefault();
+                addMediaForm(collectionHolder, $newLink);
+            });
+
+            collectionHolder.find('.tms_media_client__related_to_one_media').each(function() {
+                addMediaFormDeleteLink($(this));
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block sfynx_related_to_one_media_widget %}
+    {% spaceless %}
+        <div {{ block('widget_container_attributes') }}>
+            {% if data %}
+                <table class="table table-condensed table-bordered" style="font-size: 10px;">
+                    <tr>
+                        {% if data.isImageable() %}
+                            <td rowspan="4">
+                                <img src="{{ data.getUrl(null, {
+                                    'resize' : 1,
+                                    'height' : 100,
+                                    'maxAge' : 31536000,
+                                    'signingKey' : getService('sfynx.media.securing.signed.urls').execute({'media' : {'id': data.id}}, 'locale').getToken()
+                                }) }}" title="{{ data.title }}"></img>
+                            </td>
+                        {% else %}
+                            <td rowspan="4">
+                                <a href="#" target="_blank"><img src="" /></a>
+                            </td>
+                        {% endif %}
+                        <th>{% trans %}Provider name{% endtrans %}</th>
+                        <td>{{ data.providerName }}</td>
+                    </tr>
+                    <tr>
+                        <th>{% trans %}Reference{% endtrans %}</th>
+                        <td>
+                            <a href="{{ data.getUrl() }}" target="_blank">{{ data.providerReference }}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{% trans %}Extension{% endtrans %}</th>
+                        <td>{{ data.extension }}</td>
+                    </tr>
+                    <tr>
+                        <th>{% trans %}Mime type{% endtrans %}</th>
+                        <td>{{ data.mimeType }}</td>
+                    </tr>
+                </table>
+            {% endif %}
+            {% if form.parent is empty %}
+                {{ form_errors(form) }}
+            {% endif %}
+            {{ block('form_rows') }}
+            {{ form_rest(form) }}
+        </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block sfynx_media_upload_widget %}
+    {% spaceless %}
+        {{ block('collection_widget') }}
+    {% endspaceless %}
+    {% set url       = data ? data.getUrl('png') : null %}
+    {% set mimeType  = data ? data.mimeType : null %}
+    {% set reference = data ? data.providerReference : null %}
+
+    <script type="text/javascript">
+        function getJquery(callback) {
+            if (!window.jQuery) {
+                if (!document.getElementById('tms_jquery')) {
+                    var sJquery = document.createElement("script");
+                    sJquery.id = "tms_jquery";
+                    sJquery.src = "{{ asset('bundles/sfynxmedia/js/jquery-1.11.3.min.js') }}";
+                    sJquery.type = "text/javascript";
+
+                    var head = document.getElementsByTagName('head')[0];
+                    head.appendChild(sJquery);
+                } else {
+                    var sJquery = document.getElementById('tms_jquery');
+                }
+
+                var onload = sJquery.onload;
+                sJquery.onload = sJquery.onreadystatechange = function() {
+                    if (typeof onload == 'function') {
+                        onload();
+                    }
+                    callback(window.jQuery);
+                }
+            } else {
+                callback(window.jQuery);
+            }
+        };
+
+        getJquery(function($) {
+            $.fn.loadUploadedArea = function(url, mimeType, name, media) {
+                var $that = $(this);
+
+                var $uploadedArea = $(this).siblings('.uploaded_area');
+                if ($uploadedArea.length === 0) {
+                    $uploadedArea = $('<div class="uploaded_area"></div>');
+                    $that.after($uploadedArea);
+                }
+
+                var $button = $that.parent().find('.upload_button'),
+                    $buttonWrapper,
+                    $uploadText,
+                    $container = $that.parent()
+                ;
+                if ($button.length === 0) {
+                    var position = $that.css('position');
+
+                    if (null == position || 'static' === position) {
+                        $buttonWrapper = $('<div class="upload_button_wrapper"><input style="display:none" type="text" class="upload_text" /><button type="button" class="button upload_button"></button></div>');
+                        $that.before($buttonWrapper);
+                        $button = $buttonWrapper.find('button');
+                        $uploadText = $buttonWrapper.find('.upload_text');
+
+                        $container
+                            .addClass('upload_container')
+                            .css('position', 'relative')
+                        ;
+
+                        $that.css({
+                            filter: 'alpha(opacity=0)',
+                            opacity: 0,
+                            cursor: 'pointer'
+                        });
+
+                        $buttonWrapper.css({
+                            position: 'absolute',
+                            display: 'inline-block',
+                            'white-space': 'nowrap',
+                            padding: 0,
+                            left: 0,
+                            margin: 0
+                        });
+
+                        $button.css({
+                            padding: 0,
+                            margin: 0
+                        });
+
+                        $that
+                            .mouseenter(function(){
+                                $buttonWrapper.addClass('hover');
+                            })
+                            .mouseleave(function(){
+                                $buttonWrapper.removeClass('hover');
+                            })
+                        ;
+                    }
+                } else {
+                    $buttonWrapper = $button.parent();
+                    $uploadText = $that.parent().find('.upload_text');
+                }
+
+                if ($button.length !== 0) {
+                    if (media) {
+                        $uploadText.val(media.name);
+                    }
+
+                    var placeholder = $that.attr('placeholder'),
+                        hasFile = name ? true : false
+                    ;
+
+                    if (null == placeholder) {
+                        placeholder = 'Choisissez un fichier|Changez le fichier';
+                    }
+
+                    $container.css('max-width', 'auto');
+                    if (placeholder) {
+                        var part = hasFile ? 1 : 0,
+                            text = placeholder.split('|')[part]
+                        ;
+
+                        $button.text(text ? text : placeholder);
+                    } else {
+                        var file = this.file
+                            ? this.files[0].name
+                            : name
+                        ;
+
+                        $button.text(file
+                            ? file
+                            : 'Choisissez un fichier'
+                        );
+                    }
+                    $container.css('max-width', String($container.width())+'px');
+
+                    var vPadding = Math.max(
+                            0,
+                            Math.floor(
+                                ($that.height() - parseInt($button.css('font-size'), 10)) / 2
+                            )
+                        ),
+                        hPadding = Math.max(
+                            0,
+                            Math.floor($that.width() - $button.width()) / 2
+                        )
+                    ;
+
+                    $button.css('padding', vPadding+'px '+hPadding+'px '+vPadding+'px '+hPadding+'px');
+
+                    $buttonWrapper.css('padding-top', $that.css('padding-top'));
+                    $buttonWrapper.css('padding-right', $that.css('padding-right'));
+                    $buttonWrapper.css('padding-bottom', $that.css('padding-bottom'));
+                    $buttonWrapper.css('padding-left', $that.css('padding-left'));
+
+                    $buttonWrapper.css('margin-top', $that.css('margin-top'));
+                    $buttonWrapper.css('margin-right', $that.css('margin-right'));
+                    $buttonWrapper.css('margin-bottom', $that.css('margin-bottom'));
+                    $buttonWrapper.css('margin-left', $that.css('margin-left'));
+                }
+
+                $uploadedArea.empty();
+                var $uploadedElement = $('<div class="item"></div>');
+                $uploadedArea.append($uploadedElement);
+
+                if (mimeType.match('image.*')) {
+                    $img = $('<img src="'+url+'" title="'+name+'" />');
+
+                    var maxWidth = $img.css('max-width');
+                    if ('100%' === maxWidth || !maxWidth) {
+                        $img.css('max-width', String($container.width())+'px');
+                    }
+                    $uploadedElement.append($img);
+                }
+                $data = $('\
+                    <div class="file_data">\
+                        <p class="name"><strong>Nom:</strong> '+(media ? media.name : name)+'</p>\
+                        <p class="reference"><strong>Reference:</strong> '+name+'</p>\
+                        <p class="mime_type"><strong>Type:</strong> '+mimeType+'</p>\
+                    </div>\
+                ');
+                $uploadedElement.append($data);
+            };
+
+            {% set cleanId = id | replace({'-': ''}) %}
+            var url = "{{ url }}",
+                mimeType = "{{ mimeType }}",
+                reference = "{{ reference }}",
+                $inputFile = $('#{{ id }}_uploadedFile')
+            ;
+
+            $inputFile.loadUploadedArea(url, mimeType, reference, null);
+            $inputFile.prop('required', {{ required ? 'true' : 'false' }});
+
+            $inputFile.on('change', function(event) {
+                var files = event.target.files;
+
+                // Loop through the FileList and render image files as thumbnails.
+                for (var i = 0, f; f = files[i]; i++) {
+                    var reader = new FileReader();
+                    // Closure to capture the file information.
+                    reader.onload = (function(theFile) {
+                        return function(e) {
+                            $inputFile.loadUploadedArea(e.target.result, theFile.type, theFile.name, null);
+                        };
+                    })(f);
+
+                    // Read in the image file as a data URL.
+                    reader.readAsDataURL(f);
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block sfynx_transformable_image_upload_widget %}
+    {% spaceless %}
+        {{ block('collection_widget') }}
+    {% endspaceless %}
+    <script type="text/javascript">
+        function getJquery(callback) {
+            if (!window.jQuery) {
+                if (!document.getElementById('tms_jquery')) {
+                    var sJquery = document.createElement("script");
+                    sJquery.id   = "tms_jquery";
+                    sJquery.src  = "{{ asset('bundles/sfynxmedia/js/jquery-1.11.3.min.js') }}";
+                    sJquery.type = "text/javascript";
+
+                    var head = document.getElementsByTagName('head')[0];
+                    head.appendChild(sJquery);
+                } else {
+                    var sJquery = document.getElementById('tms_jquery');
+                }
+
+                var onload = sJquery.onload;
+                sJquery.onload = sJquery.onreadystatechange = function() {
+                    if (typeof onload == 'function') {
+                        onload();
+                    }
+                    callback(window.jQuery);
+                }
+            } else {
+                callback(window.jQuery);
+            }
+        };
+
+        getJquery(function($) {
+            var cropperJsPath = "{{ asset('bundles/sfynxmedia/cropper/dist/cropper.min.js') }}";
+            var cropperCssPath = "{{ asset('bundles/sfynxmedia/cropper/dist/cropper.css') }}";
+
+            var cropperCss = document.createElement("link")
+            cropperCss.rel  = "stylesheet";
+            cropperCss.type = "text/css";
+            cropperCss.href = cropperCssPath;
+            var head = document.getElementsByTagName('head')[0];
+            head.appendChild(cropperCss);
+
+            $.getScript(cropperJsPath)
+                .fail(function(jqxhr, settings, exception) {
+                    console.log(exception);
+                })
+                .done(function(script, textStatus) {
+                    var blobURL,
+                        URL = window.URL || window.webkitURL,
+                        defaultData  = undefined,
+                        defaultRatio = undefined
+                    ;
+
+                    var $inputPublicUri     = $('#{{ id }}_publicUri'),
+                        $inputRatio         = $('#{{ id }}_cropper_ratio'),
+                        $inputData          = $('#{{ id }}_cropper_data'),
+                        $inputContainerData = $('#{{ id }}_cropper_container_data'),
+                        $inputImageData     = $('#{{ id }}_cropper_image_data'),
+                        $inputCanvasData    = $('#{{ id }}_cropper_canvas_data'),
+                        $inputCropBoxData   = $('#{{ id }}_cropper_crop_box_data'),
+                        $inputFile          = $('#{{ id }}_uploadedFile')
+                    ;
+
+                    var $editor                = $('<div class="tms_image_editor"></div>'),
+                        $imageContainer        = $('<div class="image_container" style="width:{{ container_width }}px; height:{{ container_height }}px;"></div>'),
+                        $uploadedImage         = $('<img src="" />'),
+                        $editorRatioContainer  = $('<span{%- for attrname, attrvalue in zoom_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}></span>'),
+                        $editorRatio           = $('<input type="range" />'),
+                        $editorRotateContainer = $('<span{%- for attrname, attrvalue in rotate_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}></span>'),
+                        $editorRotate          = $('<input type="range" max="360" min="0" step="5" value="0" />'),
+                        $editorReset           = $('<input type="button"{%- for attrname, attrvalue in reset_attr %} {{ attrname }}="{{ attrvalue }}"{%- endfor -%}/>')
+                    ;
+
+                    if ('' !== $inputPublicUri.val()) {
+                        $uploadedImage.attr('src', $inputPublicUri.val());
+                        defaultData  = JSON.parse($inputData.val());
+                        defaultRatio = $inputRatio.val();
+                    }
+
+                    $uploadedImage.appendTo($imageContainer);
+                    $imageContainer.appendTo($editor);
+                    $editorReset.insertAfter($inputFile);
+                    $editorRotate.appendTo($editorRotateContainer);
+                    $editorRotateContainer.insertAfter($inputFile);
+                    $editorRatio.appendTo($editorRatioContainer);
+                    $editorRatioContainer.insertAfter($inputFile);
+                    $editor.appendTo($('#{{ id }}'));
+
+                    var initZoom = function ($img, $zoom, ratio) {
+                        var canvasData = $img.cropper('getCanvasData');
+                        var containerData = $img.cropper('getContainerData');
+
+                        if (0 == ratio || undefined == ratio) {
+                            ratio = containerData.width / canvasData.naturalWidth;
+                        }
+
+                        var stepValue = Math.round(ratio * 1000) / 10000,
+                            maxValue  = Math.round(ratio * 10000) / 1000,
+                            minValue  = stepValue
+                        ;
+
+                        $zoom.attr('step', stepValue);
+                        $zoom.attr('max', maxValue);
+                        $zoom.attr('min', minValue);
+                        $zoom.attr('value', ratio);
+
+                        $zoom.val(ratio).trigger('change');
+                    };
+
+                    var initRotate = function ($img, $rotate, degree) {
+                        var imageData = $img.cropper('getImageData');
+
+                        if (undefined == degree) {
+                            degree = 0;
+                            if (undefined != imageData.rotate) {
+                                degree = imageData.rotate;
+                            }
+                        }
+
+                        $rotate.val(degree).trigger('change');
+                    }
+
+                    var updateInputs = function ($img) {
+                        $inputData.val(JSON.stringify($img.cropper('getData', true)));
+                        $inputContainerData.val(JSON.stringify($img.cropper('getContainerData')));
+                        $inputImageData.val(JSON.stringify($img.cropper('getImageData')));
+                        $inputCanvasData.val(JSON.stringify($img.cropper('getCanvasData')));
+                        $inputCropBoxData.val(JSON.stringify($img.cropper('getCropBoxData')));
+                    };
+
+                    $uploadedImage
+                        .cropper({
+                            viewMode: 0,
+                            dragMode: 'move',
+                            background: false,
+                            guides: false,
+                            checkOrientation: true,
+                            cropBoxMovable: false,
+                            cropBoxResizable: false,
+                            toggleDragModeOnDblclick: false,
+                            scalable: false,
+                            zoomOnTouch: true,
+                            zoomOnWheel: false,
+                            minContainerWidth: {{ container_width }},
+                            minContainerHeight: {{ container_height }},
+                            minCropBoxWidth: {{ container_width }},
+                            minCropBoxHeight: {{ container_height }},
+                            built: function(e) {
+                                var degree = undefined == defaultData ? undefined : defaultData.rotate;
+
+                                initZoom($uploadedImage, $editorRatio, defaultRatio);
+                                initRotate($uploadedImage, $editorRotate, degree);
+
+                                // Init with previous value if defined
+                                if (undefined != defaultData) {
+                                   $uploadedImage.cropper('moveTo', -(defaultData.x * defaultRatio), -(defaultData.y * defaultRatio));
+                                   updateInputs($uploadedImage);
+                                }
+                            },
+                            crop: function (e) {
+                                updateInputs($uploadedImage);
+                            },
+                            zoom: function (e) {
+                                $inputRatio.val(e.ratio);
+                            }
+                        })
+                    ;
+
+                    $editorRotate.on('change input', function(event) {
+                        $uploadedImage.cropper('rotateTo', $(this).val());
+                    });
+
+                    $editorRatio.on('change input', function(event) {
+                        $uploadedImage.cropper('zoomTo', $(this).val());
+                    });
+
+                    $editorReset.on('click', function(event) {
+                        $uploadedImage.cropper('reset');
+                        initZoom($uploadedImage, $editorRatio);
+                        initRotate($uploadedImage, $editorRotate);
+                    });
+
+                    if (URL) {
+                        $inputFile.change(function () {
+                            var files = this.files;
+                            var file;
+
+                            if (!$uploadedImage.data('cropper')) {
+                                return;
+                            }
+
+                            if (files && files.length) {
+                                file = files[0];
+
+                                if (/^image\/\w+$/.test(file.type)) {
+                                    blobURL = URL.createObjectURL(file);
+                                    $uploadedImage
+                                        .one('built.cropper', function () {
+                                            // Revoke when load complete
+                                            URL.revokeObjectURL(blobURL);
+                                        })
+                                        .cropper('reset')
+                                        .cropper('replace', blobURL)
+                                    ;
+                                } else {
+                                    window.alert('Please choose an image file.');
+                                }
+                            }
+                        });
+                    } else {
+                        $inputFile.prop('disabled', true).parent().addClass('disabled');
+                    }
+                })
+            ;
+        });
+    </script>
+{% endblock %}

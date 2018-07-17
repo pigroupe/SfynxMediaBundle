@@ -7,8 +7,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -47,22 +46,22 @@ class AbstractMediaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('publicUri', HiddenType::class, [
+            ->add('publicUri', Type\HiddenType::class, [
                 'required' => false
             ])
-            ->add('mimeType', HiddenType::class, [
+            ->add('mimeType', Type\HiddenType::class, [
                 'required' => false
             ])
-            ->add('extension', HiddenType::class, [
+            ->add('extension', Type\HiddenType::class, [
                 'required' => false
             ])
-            ->add('providerReference', HiddenType::class, [
+            ->add('providerReference', Type\HiddenType::class, [
                 'required' => false
             ])
-            ->add('providerName', HiddenType::class, [
+            ->add('providerName', Type\HiddenType::class, [
                 'data'  => $options['storage_provider'],
             ])
-            ->add('sourceName', HiddenType::class, [
+            ->add('sourceName', Type\HiddenType::class, [
                 'data'  => $options['storage_source'],
             ])
             ->add('updated_at', null, [
@@ -118,31 +117,64 @@ class AbstractMediaType extends AbstractType
                 $form = $event->getForm();
                 $parent = $form->getParent()->getData();
 
+                if (method_exists($parent, 'getEnabled')) {
+                    $form->add('enabled', Type\HiddenType::class, [
+                        'required' => false,
+                        'data'  => $parent->getEnabled(),
+                    ]);
+                }
                 if (method_exists($parent, 'getTitle')) {
-                    $form->add('title', HiddenType::class, [
+                    $form->add('title', Type\HiddenType::class, [
                         'required' => false,
                         'data'  => $parent->getTitle(),
                     ]);
                 }
                 if (method_exists($parent, 'getDescriptif')) {
-                    $form->add('descriptif', HiddenType::class, [
+                    $form->add('descriptif', Type\HiddenType::class, [
                         'required' => false,
                         'data'  => $parent->getDescriptif(),
                     ]);
                 }
-
                 if (null !== $event->getData()) {
                     $isUploadedFileRequired = false;
                 }
 
-                $form->add('uploadedFile', FileType::class, [
+                $form->add('uploadedFile', Type\FileType::class, [
                     'label' => ' ',
                     'mapped' => false,
                     'required' => $isUploadedFileRequired,
                     'constraints' => $options['constraints']
                 ]);
 
-                $form->add('metadata', HiddenType::class, [
+                $form->add('quality', Type\TextType::class, [
+                    'data'  => $parent->getImage()->getQuality(),
+                    'label' => 'pi.form.label.field.quality',
+                    'label_attr' => [
+                        'class'=> 'other_collection',
+                    ],
+                ]);
+
+                $form->add('connected', Type\CheckboxType::class, [
+                    'data'  => (boolean)$parent->getImage()->getConnected(),
+                    'label' => 'pi.form.label.field.connexion_oblige',
+                    'label_attr' => [
+                        'class'=> 'permission_collection',
+                    ],
+                ]);
+                $form->add('roles', \Sfynx\AuthBundle\Application\Validation\Type\SecurityRolesType::class, [
+                    'data'  => $parent->getImage()->getRoles(),
+                    'multiple' => true,
+                    'required' => false,
+                    'expanded' => false,
+                    'attr' => array(
+                        "class"=> 'pi_multiselect',
+                    ),
+                    'label_attr' => [
+                        'class'=> 'permission_collection',
+                    ],
+                ]);
+
+                $form->add('metadata', Type\HiddenType::class, [
                     'required' => false,
                     'data'     => json_encode($options['metadata'], true),
                 ]);

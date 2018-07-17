@@ -16,7 +16,7 @@
 
 	<!-- Begin tag markup -->
 	<div id="tabs">
-        {% include getParameter('sfynx.template.theme.layout.admin.pc')|replace({'::': ':'})~"Crud:edit-header.html.twig" %}
+        {% include getParameter('sfynx.template.theme.layout.admin.pc')~"Crud/edit-header.html.twig" %}
 		{% form_theme edit_form getParameter('sfynx.template.theme.layout.admin.form.template') %}
 		{{ form_start(edit_form, {'action': path('sfynx_media_mediatheque_edit', { 'id': entity.id, 'NoLayout': NoLayout, 'category':category, 'status':status }), 'method': 'POST', 'attr': {'class': 'myform', 'novalidate': 'novalidate'}}) }}
 		    <div id="tabs-1">
@@ -36,7 +36,7 @@
 			    </li>
 			</ul>
         {{ form_end(edit_form) }}
-		{% include getParameter('sfynx.template.theme.layout.admin.pc')|replace({'::': ':'})~"Crud:edit-footer.html.twig" %}
+		{% include getParameter('sfynx.template.theme.layout.admin.pc')~"Crud/edit-footer.html.twig" %}
 	</div>
 	<!-- End tag markup -->
 
@@ -55,5 +55,14 @@
 	{#{% if entity.image is defined and entity.status == "file" %}#}
 	{#{{ file_form(entity.image, "sfynx_mediabundle_mediatype_file_image_binaryContent",  'reference', 'display: block; text-align:left;')|raw }}#}
 	{#{% endif %}#}
+
+	<script type="text/javascript">
+        //<![CDATA[
+        j_prototype_bytabs.ftc_accordion_form("licence_collection", "{{ 'pi.form.label.field.licence'|trans }}", ".myform");
+        j_prototype_bytabs.ftc_accordion_form("taxonomies_collection", "{{ 'pi.form.label.field.taxonomies'|trans }}", ".myform");
+        j_prototype_bytabs.ftc_accordion_form("permission_collection", "{{ 'pi.form.label.field.rule_permission'|trans }}", ".myform");
+        j_prototype_bytabs.ftc_accordion_form("other_collection", "{{ 'pi.form.label.field.other'|trans }}", ".myform");
+        //]]>
+	</script>
 
 {% endblock %}
