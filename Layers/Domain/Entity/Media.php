@@ -136,7 +136,7 @@ class Media implements MediaInterface
      * @var boolean
      * @ORM\Column(type="boolean", options={"default" = true})
      */
-    protected $connected = true;
+    protected $connected = false;
 
     /**
      * @ORM\Column(type="json", nullable=true)
@@ -154,13 +154,11 @@ class Media implements MediaInterface
     protected $usernames = [];
 
     /**
-     * Get id.
-     *
-     * @return integer
+     * @return Media
      */
-    public function getId()
+    public static function createFromNative(): self
     {
-        return $this->id;
+        return new self();
     }
 
     /**
@@ -170,7 +168,7 @@ class Media implements MediaInterface
      */
     public function __toString()
     {
-        return sprintf('[%s] %s',
+        return \sprintf('[%s] %s',
             $this->getProviderName(),
             $this->getProviderReference()
         );
@@ -184,21 +182,53 @@ class Media implements MediaInterface
     public function __toArray()
     {
         return [
-            'enabled'           => $this->enabled,
-            'publicUri'         => $this->publicUri,
-            'mimeType'          => $this->mimeType,
-            'providerName'      => $this->providerName,
+            'enabled' => $this->enabled,
+            'publicUri' => $this->publicUri,
+            'mimeType' => $this->mimeType,
+            'providerName' => $this->providerName,
             'providerReference' => $this->providerReference,
-            'providerData'      => $this->providerData,
-            'extension'         => $this->extension,
-            'createdAt'         => $this->createdAt,
-            'updatedAt'         => $this->updatedAt,
-            'metadata'          => $this->metadata,
-            'signing'           => $this->signing,
-            'rangeip'           => $this->rangeip,
-            'roles'             => $this->roles,
-            'usernames'         => $this->usernames,
+            'providerData' => $this->providerData,
+            'extension' => $this->extension,
+            'createdAt' => $this->createdAt,
+            'updatedAt' => $this->updatedAt,
+            'metadata' => $this->metadata,
+            'signing' => $this->signing,
+            'rangeip' => $this->rangeip,
+            'roles' => $this->roles,
+            'usernames' => $this->usernames,
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function serialize()
+    {
+        return \serialize($this->__toArray());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unserialize($data)
+    {
+        $unserializedData = \unserialize($data);
+
+        $this->enabled = $unserializedData['enabled'];
+        $this->usernames = $unserializedData['usernames'];
+        $this->publicUri = $unserializedData['publicUri'];
+        $this->mimeType = $unserializedData['mimeType'];
+        $this->providerName = $unserializedData['providerName'];
+        $this->providerReference = $unserializedData['providerReference'];
+        $this->providerData = $unserializedData['providerData'];
+        $this->extension = $unserializedData['extension'];
+        $this->createdAt = $unserializedData['createdAt'];
+        $this->updatedAt = $unserializedData['updatedAt'];
+        $this->metadata = $unserializedData['metadata'];
+        $this->signing = $unserializedData['signing'];
+        $this->rangeip = $unserializedData['rangeip'];
+        $this->roles = $unserializedData['roles'];
+        $this->usernames = $unserializedData['usernames'];
     }
 
 //    /**
@@ -239,11 +269,9 @@ class Media implements MediaInterface
     public function __call($method, $arguments)
     {
         $property  = $method;
-        $subMethod = substr($method, 0, 3);
-
-        if (in_array($subMethod, array('set', 'get'))) {
-            $property = Inflector::tableize(substr($method, 3));
-
+        $subMethod = \substr($method, 0, 3);
+        if (\in_array($subMethod, ['set', 'get'])) {
+            $property = Inflector::tableize(\substr($method, 3));
             if ('set' === $subMethod) {
                 $this->$property = $arguments;
             }
@@ -253,35 +281,13 @@ class Media implements MediaInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Get id.
+     *
+     * @return integer
      */
-    public function serialize()
+    public function getId()
     {
-        return serialize($this->__toArray());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function unserialize($data)
-    {
-        $unserializedData = unserialize($data);
-
-        $this->enabled           = $unserializedData['enabled'];
-        $this->usernames         = $unserializedData['usernames'];
-        $this->publicUri         = $unserializedData['publicUri'];
-        $this->mimeType          = $unserializedData['mimeType'];
-        $this->providerName      = $unserializedData['providerName'];
-        $this->providerReference = $unserializedData['providerReference'];
-        $this->providerData      = $unserializedData['providerData'];
-        $this->extension         = $unserializedData['extension'];
-        $this->createdAt         = $unserializedData['createdAt'];
-        $this->updatedAt         = $unserializedData['updatedAt'];
-        $this->metadata          = $unserializedData['metadata'];
-        $this->signing           = $unserializedData['signing'];
-        $this->rangeip           = $unserializedData['rangeip'];
-        $this->roles             = $unserializedData['roles'];
-        $this->usernames         = $unserializedData['usernames'];
+        return $this->id;
     }
 
     /**
@@ -299,7 +305,7 @@ class Media implements MediaInterface
             return true;
         }
 
-        return (boolean)preg_match("#^image/#", $this->getMimeType());
+        return (boolean)\preg_match("#^image/#", $this->getMimeType());
     }
 
     /**
@@ -310,12 +316,12 @@ class Media implements MediaInterface
     public function getPublicData()
     {
         return [
-            'providerName'      => $this->getProviderName(),
+            'providerName' => $this->getProviderName(),
             'providerReference' => $this->getProviderReference(),
-            'publicUri'         => $this->getPublicUri(),
-            'extension'         => $this->getExtension(),
-            'mimeType'          => $this->getMimeType(),
-            'enabled'           => $this->getEnabled()
+            'publicUri' => $this->getPublicUri(),
+            'extension' => $this->getExtension(),
+            'mimeType' => $this->getMimeType(),
+            'enabled' => $this->getEnabled()
         ];
     }
 

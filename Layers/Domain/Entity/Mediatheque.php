@@ -344,7 +344,7 @@ class Mediatheque extends AbstractDefault implements MediathequeInterface
      */
     public function setImage($image)
     {
-        $this->image     = $image;
+        $this->image = $image;
         return $this;
     }
 

@@ -1,14 +1,19 @@
 <?php
 namespace Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Query\Orm\Mediatheque\QueryBuilder;
 
-//use \iterable;
 use Doctrine\ORM\QueryBuilder;
-use Sfynx\CoreBundle\Layers\Infrastructure\Persistence\Adapter\Generalisation\Orm\AbstractQueryBuilder;
+use Sfynx\CoreBundle\Layers\Infrastructure\Persistence\QueryBuilder\Generalisation\Orm\AbstractQueryBuilder;
 
 class FindAllByCategoryQueryBuilder extends AbstractQueryBuilder
 {
     /**
-     * {@inheritdoc}
+     * @param string $category
+     * @param null $MaxResults
+     * @param string $ORDER_PublishDate
+     * @param string $ORDER_Position
+     * @param bool $enabled
+     * @param bool $with_archive
+     * @return QueryBuilder
      */
     public function __invoke(
         $category = '',

@@ -155,7 +155,7 @@ class AbstractMediaType extends AbstractType
                 ]);
 
                 $form->add('connected', Type\CheckboxType::class, [
-                    'data'  => (boolean)$parent->getImage()->getConnected(),
+                    'data'  => $parent->getImage()->getConnected(),
                     'label' => 'pi.form.label.field.connexion_oblige',
                     'label_attr' => [
                         'class'=> 'permission_collection',
