@@ -91,15 +91,18 @@ class EntityManager extends AbstractManager implements ManagerInterface
                 )
             );
         }
-        if (null !== $command->image) {
-            if (is_null($entity->getImage())) {
-                $media = Media::newFromArray($command->image);
-            } else {
-                $media = Media::buildFromArray($entity->getImage(), $command->image);
-            }
-            $media->setUpdatedAt(null);
-            $entity->setImage($media);
+
+        if ((null !== $command->image)
+            && is_null($entity->getImage())
+        ) {
+            $media = Media::newFromArray($command->image);
+        } elseif (null !== $command->image) {
+            $media = Media::buildFromArray($entity->getImage(), $command->image);
+        } else {
+            $media = Media::createFromNative();
         }
+        $media->setUpdatedAt(new \DateTime());
+        $entity->setImage($media);
 
         return $this;
     }

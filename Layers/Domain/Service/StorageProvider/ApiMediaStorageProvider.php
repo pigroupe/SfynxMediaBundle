@@ -87,7 +87,6 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
             if (null === $media->getUploadedFile()) {
                 if (!empty($metadata)) {
                     $response = $this->update($media, $metadata);
-
                     if ($this->em instanceof EntityManagerInterface) {
                         $this->em->getConnection()->update($this->getOwningTable($entity), $media->__toArray());
                     }
@@ -108,6 +107,8 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
         if (null !== $media->getUploadedFile()) {
             $response = $this->create($media, $metadata);
             $apiMedia = json_decode($response->getContent(), true);
+
+//            dump($apiMedia);exit;
 
             $media->setProviderData($apiMedia);
             $media->setMimeType($apiMedia['mimeType']);
