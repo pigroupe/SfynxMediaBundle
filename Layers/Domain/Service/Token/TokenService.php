@@ -215,11 +215,11 @@ class TokenService
      */
     protected function getSigningKey(stdClass $parameters): JwtCommand
     {
-//        try {
+        try {
             $response = $this->create($parameters);
-//        } catch (UnavailableServiceException $e) {
-//            return $this->setSigningKey($parameters);
-//        }
+        } catch (UnavailableServiceException $e) {
+            return $this->setSigningKey($parameters);
+        }
 
         $body =  json_decode($response->getContent(), true);
         if (!empty($body['kid'])

@@ -49,7 +49,7 @@ class Configuration implements ConfigurationInterface
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.
-        $this->addMappingConfig($rootNode);
+        \Sfynx\CoreBundle\DependencyInjection\Configuration::addMappingConfig($rootNode);
         $this->addStorageConfig($rootNode);
         $this->addCacheConfig($rootNode);
         $this->addMediaConfig($rootNode);
@@ -58,37 +58,6 @@ class Configuration implements ConfigurationInterface
         $this->addCropConfig($rootNode);
 
         return $treeBuilder;
-    }
-
-    /**
-     * Mapping config
-     *
-     * @param $rootNode \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition
-     *
-     * @return void
-     * @access protected
-     *
-     * @author Etienne de Longeaux <etienne.delongeaux@gmail.com>
-     */
-    protected function addMappingConfig(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-        ->children()
-            ->arrayNode('mapping')
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->scalarNode('provider')->isRequired()->defaultValue('orm')->end()
-                    ->scalarNode('media_class')->defaultValue('Sfynx\MediaBundle\Layers\Domain\Entity\Media')->end()
-                    ->scalarNode('media_entitymanager_command')->defaultValue('doctrine.orm.entity_manager')->end()
-                    ->scalarNode('media_entitymanager_query')->defaultValue('doctrine.orm.entity_manager')->end()
-                    ->scalarNode('media_entitymanager')->defaultValue('doctrine.orm.entity_manager')->end()
-                    ->scalarNode('mediatheque_class')->defaultValue('Sfynx\MediaBundle\Layers\Domain\Entity\Mediatheque')->end()
-                    ->scalarNode('mediatheque_entitymanager_command')->defaultValue('doctrine.orm.entity_manager')->end()
-                    ->scalarNode('mediatheque_entitymanager_query')->defaultValue('doctrine.orm.entity_manager')->end()
-                    ->scalarNode('mediatheque_entitymanager')->defaultValue('doctrine.orm.entity_manager')->end()
-                ->end()
-            ->end()
-        ->end();
     }
 
     /**

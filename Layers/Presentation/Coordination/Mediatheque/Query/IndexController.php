@@ -36,6 +36,8 @@ use Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Query\OBIndexF
 use Sfynx\MediaBundle\Layers\Domain\Workflow\Observer\Mediatheque\Response\OBCreateIndexBodyJson as OBMediathequeCreateIndexBodyJson;
 use Sfynx\MediaBundle\Layers\Domain\Service\Token\TokenService;
 
+use Sfynx\SpecificationDoctrine\Application\Handler\QueryHandler;
+
 /**
  * Index controller.
  *
@@ -105,6 +107,77 @@ class IndexController extends AbstractQueryController
         if (false === $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException();
         }
+
+        $options['criteria'] = \json_decode('{"field": "genre_produit_id", "operator": "=", "value": 3}', true);
+        $options['criteria'] = \json_decode('{
+                    "and":[
+                        {"field": "genre_produit_id", "operator": "!=", "value": ""},
+                        {"field": "genre_produit_id", "operator": "!=", "value": "0"}
+                    ]
+         }', true);
+        $options['criteria'] = \json_decode('{
+            "or":[
+                {
+                    "and":[
+                        {"field": "lastName", "operator": "like", "value": "S%"},
+                        {"field": "sex", "operator": "=", "value": "F"}
+                    ]
+                },
+                {
+                    "xor":[
+                        {"field": "firstName", "operator": "like", "value": "%John%"},
+                        {
+                            "not":[
+                                {"field": "sex", "operator": "=", "value": "M"}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }', true);
+
+
+//        SELECT a, u, p, a
+//        FROM Sfynx\MediaBundle\Layers\Domain\Entity\Mediatheque a
+//        WHERE
+//            (
+//                (
+//                    (
+//                        ((a.civility.lastName LIKE ?0))
+//                        AND
+//                        ((a.civility.sex = ?1))
+//                    )
+//                )
+//                OR
+//                (
+//                    (
+//                        (a.civility.firstName LIKE ?2)
+//                        AND
+//                        ( NOT (  (NOT ((a.civility.sex = ?3) ))  ) )
+//                    )
+//                    OR
+//                    (
+//                        ( NOT ( (a.civility.firstName LIKE ?2) ) )
+//                        AND
+//                        (NOT ((a.civility.sex = ?3) ))
+//                    )
+//                )
+//            )
+//        ORDER BY a.group.description ASC
+
+//        $start = \microtime(true);
+//        $options['select'] = \json_decode('["u", "p"]', true);
+//        $options['limit'] = \json_decode('{"start": 0, "count": 100}', true); # ex.: {"start": 0, "count": 100}
+//        $options['orderBy'] = \json_decode('[{"field": "description", "asc": true}]', true); # ex.: [{"field": "xxx", "asc": true}]
+//
+//        $searchBy = new QueryHandler($options, $this->manager->getQueryRepository(), new \Sfynx\SpecificationDoctrine\Infrastructure\Persistence\FieldsDefinition\Group);
+//        $result = $searchBy->process('orm');
+//        $end = \microtime(true);
+//        dump(sprintf('time execution in seconds: %s', round($end - $start, 5)));
+//
+//        dump($result);
+////        dump($result->getArrayResults());
+//        exit;
 
         // 1. Transform Request to Query.
         $adapter = new QueryAdapter(new IndexQuery());

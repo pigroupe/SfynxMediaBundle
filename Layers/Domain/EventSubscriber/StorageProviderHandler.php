@@ -30,56 +30,19 @@ use Sfynx\MediaBundle\Layers\Infrastructure\Exception\Factory\MediaFactoryExcept
 class StorageProviderHandler  extends abstractListener implements EventSubscriber
 {
     /** @var string */
-    protected $providerName;
+    protected $providerStorage;
     /** @var array */
     protected $storageProviders = [];
 
     /**
-     * @return array
-     */
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::prePersist,
-            Events::preUpdate,
-            Events::preRemove,
-        );
-    }
-
-    /**
-     * Get StorageProvider
-     *
-     * @param string $serviceName
-     * @return StorageProviderInterface|null
-     */
-    public function getStorageProvider($serviceName)
-    {
-        return isset($this->storageProviders[$serviceName]) ?
-            $this->storageProviders[$serviceName] :
-            null
-            ;
-    }
-
-    /**
-     * Add StorageProvider
-     *
-     * @param StorageProviderInterface $provider
-     * @param string $serviceName
-     */
-    public function addStorageProvider(StorageProviderInterface $provider, $serviceName)
-    {
-        $this->storageProviders[$serviceName] = $provider;
-    }
-
-    /**
      * Constructor
      *
-     * @param string $providerName
+     * @param string $providerStorage
      * @param ContainerInterface $container
      */
-    public function __construct(string $providerName, ContainerInterface $container)
+    public function __construct(string $providerStorage, ContainerInterface $container)
     {
-        $this->providerName = $providerName;
+        $this->providerStorage = $providerStorage;
         parent::__construct($container);
 
 //        if (class_exists('Sfynx\MediaBundle\Layers\Domain\Entity\Translation\MediathequeTranslation')) {
@@ -142,6 +105,43 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
 //                'orphanRemoval' => false,
 //            ));
 //        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getSubscribedEvents()
+    {
+        return array(
+            Events::prePersist,
+            Events::preUpdate,
+            Events::preRemove,
+        );
+    }
+
+    /**
+     * Get StorageProvider
+     *
+     * @param string $serviceName
+     * @return StorageProviderInterface|null
+     */
+    public function getStorageProvider($serviceName)
+    {
+        return isset($this->storageProviders[$serviceName]) ?
+            $this->storageProviders[$serviceName] :
+            null
+            ;
+    }
+
+    /**
+     * Add StorageProvider
+     *
+     * @param StorageProviderInterface $provider
+     * @param string $serviceName
+     */
+    public function addStorageProvider(StorageProviderInterface $provider, $serviceName)
+    {
+        $this->storageProviders[$serviceName] = $provider;
     }
 
     /**
@@ -221,7 +221,11 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
         }
 
         if ($entity instanceof MediaInterface) {
-            $provider = $this->getStorageProvider($this->providerName);
+            $providerStorage = $this->providerStorage;
+            if (!empty($entity->getProviderStorage())) {
+                $providerStorage = $entity->getProviderStorage();
+            }
+            $provider = $this->getStorageProvider($providerStorage);
 
             try {
                 $response = $provider->add($entity);
@@ -255,7 +259,7 @@ class StorageProviderHandler  extends abstractListener implements EventSubscribe
             $entity = $media;
         }
         if ($entity instanceof MediaInterface) {
-            $provider = $this->getStorageProvider($this->providerName);
+            $provider = $this->getStorageProvider($this->providerStorage);
 
             try {
                 $response = $provider->remove($entity);

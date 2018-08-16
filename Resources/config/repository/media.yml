@@ -1,14 +1,17 @@
 parameters:
     # Manager class
     sfynx.media.manager.media.entity.class: Sfynx\MediaBundle\Layers\Domain\Service\Media\Manager\EntityManager
+    sfynx.media.manager.media.params:
+        class: '%sfynx.media.mapping.media.class%'
     # Adapter factory class
     sfynx.media.factory.media.class: Sfynx\CoreBundle\Layers\Infrastructure\Persistence\Factory\MultiAdapterFactory
-    # Entity class value
-    sfynx.media.manager.media.params:
-      class: '%sfynx.media.media_class%'
-    # Reposioty names
-    sfynx.media.repository.media.orm.command.class: Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Command\Orm\MediaRepository
-    sfynx.media.repository.media.orm.query.class: Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Query\Orm\MediaRepository
+
+    # ORM QueryBuilder names
+    sfynx.media.repository.media.orm.query.querybuilder: []
+    sfynx.media.repository.media.orm.command.querybuilder: []
+    # COUCHDB QueryBuilder names
+    sfynx.media.repository.media.couchdb.query.querybuilder: []
+    sfynx.media.repository.media.couchdb.command.querybuilder: []
 
 services:
     #

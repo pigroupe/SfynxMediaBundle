@@ -1,18 +1,19 @@
 parameters:
     # Manager class
     sfynx.media.manager.mediatheque.entity.class: Sfynx\MediaBundle\Layers\Domain\Service\Mediatheque\Manager\EntityManager
+    sfynx.media.manager.mediatheque.params:
+        class: '%sfynx.media.mapping.mediatheque.class%'
     # Adapter factory class
     sfynx.media.factory.mediatheque.class: Sfynx\CoreBundle\Layers\Infrastructure\Persistence\Factory\MultiAdapterFactory
-    # Entity class value
-    sfynx.media.manager.mediatheque.params:
-      class: '%sfynx.media.mediatheque_class%'
-    # Reposioty names
-    sfynx.media.repository.mediatheque.orm.command.class: Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Command\Orm\MediathequeRepository
-    sfynx.media.repository.mediatheque.orm.query.class: Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Query\Orm\MediathequeRepository
-    # QueryBuilder names
+
+    # ORM QueryBuilder names
     sfynx.media.repository.mediatheque.orm.query.querybuilder:
         FindAllByCategoryQueryBuilder: 'Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Query\Orm\Mediatheque\QueryBuilder\FindAllByCategoryQueryBuilder'
+        FindAllByCategoryQueryTransfomer: 'Sfynx\MediaBundle\Layers\Infrastructure\Persistence\Adapter\Query\Orm\Mediatheque\QueryTransfomer\FindAllByCategoryQueryTransfomer'
     sfynx.media.repository.mediatheque.orm.command.querybuilder: []
+    # COUCHDB QueryBuilder names
+    sfynx.media.repository.mediatheque.couchdb.query.querybuilder: []
+    sfynx.media.repository.mediatheque.couchdb.command.querybuilder: []
 
 services:
     #

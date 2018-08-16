@@ -22,16 +22,16 @@ trait TraitProcess
     protected function onSuccess(): void
     {
         $entity = $this->wfLastData->entity;
-        try {
+//        try {
             if (is_object($entity) && count($this->wfCommand->errors) == 0) {
                 $entity = $this->manager->buildFromCommand($entity, $this->wfCommand);
 
                 $this->manager->getCommandRepository()->save($entity);
                 $this->manager->getCommandRepository()->getCacheFactory()->deleteAllCacheQuery('hash_list_gedmomedia');
             }
-        } catch (Exception $e) {
-            $this->wfCommand->errors['success'] = 'errors.mediatheque.save';
-        }
+//        } catch (Exception $e) {
+//            $this->wfCommand->errors['success'] = 'errors.mediatheque.save';
+//        }
         // we add the last entity version
         $this->wfLastData->entity = $entity;
     }

@@ -31,7 +31,10 @@ class ChangeProviderPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        FactoryPass::create($container->getParameter('sfynx.media.mapping.provider'), 'mediatheque', 'sfynx.media')->process($container);
-        FactoryPass::create($container->getParameter('sfynx.media.mapping.provider'), 'media', 'sfynx.media')->process($container);
+        if ($container->hasParameter('sfynx.media.mapping.entities')) {
+            foreach ($container->getParameter('sfynx.media.mapping.entities') as $entity => $parameters) {
+                FactoryPass::create($entity, 'sfynx.media', $parameters, true)->process($container);
+            }
+        }
     }
 }
