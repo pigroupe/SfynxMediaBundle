@@ -14,9 +14,9 @@ This bundle is a new version of the TmsMediaBundle (https://github.com/Tessi-Tms
 
 The source of the documentation is stored in the `Resources/doc/` folder in this bundle :
 
-* [Read the Documentation for master](https://github.com/pigroupe/SfynxMediaBundle/blob/master/Resources/doc/index)
+* [Read the Documentation for master](https://github.com/pigroupe/SfynxMediaBundle/blob/master/Resources/doc/index.md)
 
-* [Read the Documentation](Resources/doc/index)
+* [Read the Documentation](Resources/doc/index.md)
 
 ## Installation
 

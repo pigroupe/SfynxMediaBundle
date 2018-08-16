@@ -2,7 +2,8 @@
 
 The following documents are available :
 
-- [Configuration reference](Resources/doc/configuration_reference)
+- [Reference configuration](configuration_reference.md)
+- [How to use Form type](form_type.md)
 - [ChangeLog](#changelog)
 - [Todo](#todo)
 
