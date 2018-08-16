@@ -5,7 +5,7 @@ Symfony3/4's Sfynx Media Bundle provides an Media Client to manage media from Sf
 The bundle includes :
 - a complete galery of media which compose with SfynxApiMediaBundle
 - interface to manage Sfynx Api Media from entity media persistence
-- multiple form type to create form relation between an new entity and the media entity
+- multiple form type to create form relation between a new entity and the media entity
 - croping form type
 
 This bundle is a new version of the TmsMediaBundle (https://github.com/Tessi-Tms/TmsMediaClientBundle).
