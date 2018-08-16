@@ -21,8 +21,7 @@ class FormRequest extends AbstractFormRequest
     protected $defaults = [
         'GET' => [
             'entityId' => null,
-            'category' => '',
-            'noLayout' => '',
+            'category' => null,
             'status' => null,
             'title' => null,
             'descriptif' => null,
@@ -30,15 +29,34 @@ class FormRequest extends AbstractFormRequest
             'copyright' => null,
             'position' => null,
             'publishedAt' => null,
+            'noLayout' => false,
             'archived' => false,
             'enabled' => true,
             'mediadelete' => false,
-            'image' => null
+            'image' => [
+                'enabled' => true,
+                'connected' => true,
+                'descriptif' => null,
+                'extension' => null,
+                'metadata' => null,
+                'roles' => null,
+                'mimeType' => null,
+                'providerStorage' => null,
+                'providerName' => null,
+                'providerReference' => null,
+                'publicUri' => null,
+                'sourceName' => null,
+                'title' => null,
+                'quality' => null,
+//                'test' => [
+//                    'enabled' => true,
+//                    'connected' => true,
+//                ]
+            ]
         ],
         'POST' => [
             'entityId' => null,
-            'category' => '',
-            'noLayout' => '',
+            'category' => null,
             'status' => null,
             'title' => null,
             'descriptif' => null,
@@ -46,10 +64,30 @@ class FormRequest extends AbstractFormRequest
             'copyright' => null,
             'position' => null,
             'publishedAt' => null,
+            'noLayout' => false,
             'archived' => false,
             'enabled' => false,
             'mediadelete' => false,
-            'image' => null
+            'image' => [
+                'enabled' => false,
+                'connected' => false,
+                'descriptif' => null,
+                'extension' => null,
+                'metadata' => null,
+                'roles' => null,
+                'mimeType' => null,
+                'providerStorage' => null,
+                'providerName' => null,
+                'providerReference' => null,
+                'publicUri' => null,
+                'sourceName' => null,
+                'title' => null,
+                'quality' => null,
+//                'test' => [
+//                    'enabled' => true,
+//                    'connected' => true,
+//                ]
+            ]
         ]
     ];
 
@@ -67,25 +105,66 @@ class FormRequest extends AbstractFormRequest
      */
     protected $allowedTypes = [
         'GET' => [
-            'category' => ['string', 'null'],
+            'category' => ['int', 'null'],
             'noLayout' => ['bool', 'null'],
             'status' => ['string'],
+            'position' => ['int', 'null'],
+            'publishedAt' => ['Datetime', 'null'],
+            'image' => [
+                'enabled' => ['bool'],
+                'connected' => ['bool'],
+                'descriptif' => ['string', 'null'],
+                'extension' => ['string', 'null'],
+                'metadata' => ['array', 'null'],
+                'roles' => ['array', 'null'],
+                'mimeType' => ['string', 'null'],
+                'providerStorage' => ['string', 'null'],
+                'providerName' => ['string', 'null'],
+                'providerReference' => ['string', 'null'],
+                'publicUri' => ['string', 'null'],
+                'sourceName' => ['string', 'null'],
+                'title' => ['string', 'null'],
+                'quality' => ['int', 'null'],
+//                'test' => [
+//                    'enabled' => ['bool', 'null'],
+//                    'connected' => ['bool', 'null'],
+//                ]
+            ]
         ],
         'POST' => [
             'entityId' => ['int', 'null'],
-            'category' => ['string', 'null'],
+            'category' => ['int', 'null'],
             'noLayout' => ['bool', 'null'],
             'status' => ['string'],
+            'position' => ['int', 'null'],
+            'publishedAt' => ['Datetime', 'null'],
             'title' => ['string'],
             'descriptif' => ['string', 'null'],
             'url' => ['string', 'null'],
-            'mediadelete' => ['bool', 'null'],
             'copyright' => ['string', 'null'],
-            'position' => ['int', 'null'],
-            'publishedAt' => ['string', 'null'],
             'archived' => ['bool', 'null'],
+            'mediadelete' => ['bool', 'null'],
             'enabled' => ['bool'],
-            'image' => ['array', 'null']
+            'image' => [
+                'enabled' => ['bool'],
+                'connected' => ['bool'],
+                'descriptif' => ['string', 'null'],
+                'extension' => ['string', 'null'],
+                'metadata' => ['array', 'null'],
+                'roles' => ['array', 'null'],
+                'mimeType' => ['string', 'null'],
+                'providerStorage' => ['string', 'null'],
+                'providerName' => ['string', 'null'],
+                'providerReference' => ['string', 'null'],
+                'publicUri' => ['string', 'null'],
+                'sourceName' => ['string', 'null'],
+                'title' => ['string', 'null'],
+                'quality' => ['int', 'null'],
+//                'test' => [
+//                    'enabled' => ['bool'],
+//                    'connected' => ['bool'],
+//                ]
+            ]
         ],
         'PATCH' => 'POST'
     ];
@@ -100,9 +179,29 @@ class FormRequest extends AbstractFormRequest
         $this->options['status'] = $this->status;
         $this->options['noLayout'] = $this->request->getQuery()->get('NoLayout');
 
-        foreach (['noLayout','archived', 'enabled', 'mediadelete'] as $data) {
+        foreach (['noLayout', 'archived', 'enabled', 'mediadelete'] as $data) {
             if (isset($this->options[$data])) {
-                $this->options[$data] = (int)$this->options[$data] ? true : false;
+                $this->options[$data] = (boolean)$this->options[$data];
+            }
+        }
+        foreach (['enabled', 'connected'] as $data) {
+            if (isset($this->options['image'][$data])) {
+                $this->options['image'][$data] = (boolean)$this->options['image'][$data];
+            }
+        }
+        foreach (['category'] as $data) {
+            if (isset($this->options[$data])) {
+                $this->options[$data] = (int)$this->options[$data];
+            }
+        }
+        foreach (['quality'] as $data) {
+            if (isset($this->options['image'][$data])) {
+                $this->options['image'][$data] = (int)$this->options['image'][$data];
+            }
+        }
+        foreach (['metadata'] as $data) {
+            if (isset($this->options['image'][$data])) {
+                $this->options['image'][$data] = json_decode($this->options['image'][$data], true);
             }
         }
         $id = $this->request->get('id', '');

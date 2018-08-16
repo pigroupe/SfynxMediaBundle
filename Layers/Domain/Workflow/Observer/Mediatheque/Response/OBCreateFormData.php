@@ -55,15 +55,9 @@ class OBCreateFormData extends AbstractCreateFormData
 
             $this->wfLastData->formViewData['categories'] = $this->managerGedmoCategory
                 ->getQueryRepository()
-                ->getAllByType(Category::TYPE_MEDIA, $id_category)
-                ;
+                ->getAllByType(Category::TYPE_MEDIA, $id_category);
 
-//            // Register data values
-//            $this->wfLastData->formViewData['categories'] = $this->managerGedmoCategory
-//                ->getQueryRepository()
-//                ->Result($query)
-//                ->getResults(\Doctrine\ORM\AbstractQuery::HYDRATE_OBJECT);
-
+            $this->wfLastData->formViewData['data_class'] = get_class($this->wfHandler->command);
         } catch (Exception $e) {
             throw WorkflowException::noCreatedFormData();
         }

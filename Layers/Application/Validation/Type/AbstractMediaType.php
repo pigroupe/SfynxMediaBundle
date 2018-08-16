@@ -18,10 +18,10 @@ use Sfynx\MediaBundle\Layers\Infrastructure\Exception\MediaClientException;
 /**
  * class AbstractMediaType
  *
- * @category   Sfynx\MediaBundle\Layers
- * @package    Application
+ * @category Sfynx\MediaBundle\Layers
+ * @package Application
  * @subpackage Validation\Type
- * @author   Etienne de Longeaux <etienne.delongeaux@gmail.com>
+ * @author Etienne de Longeaux <etienne.delongeaux@gmail.com>
  */
 class AbstractMediaType extends AbstractType
 {
@@ -58,18 +58,8 @@ class AbstractMediaType extends AbstractType
             ->add('providerReference', Type\HiddenType::class, [
                 'required' => false
             ])
-            ->add('providerName', Type\HiddenType::class, [
-                'data'  => $options['storage_provider'],
-            ])
             ->add('sourceName', Type\HiddenType::class, [
                 'data'  => $options['storage_source'],
-            ])
-            ->add('updated_at', null, [
-                'widget' => 'single_text', // choice, text, single_text
-                'attr' => ['style'=>'display:none;'],
-                "label_attr" => [
-                    "style"=> 'display:none;',
-                ],
             ])
             ;
     }
@@ -79,12 +69,14 @@ class AbstractMediaType extends AbstractType
         $resolver
             ->setRequired([
                 'storage_provider',
+                'storage_name',
                 'storage_source',
-                'metadata'
+                'metadata',
             ])
             ->setDefaults([
                 'data_class' => Media::class,
                 'storage_provider' => '',
+                'storage_name' => '',
                 'storage_source' => '',
                 'handler' => '',
                 'context' => '',
@@ -97,6 +89,7 @@ class AbstractMediaType extends AbstractType
                 ],
             ])
             ->setAllowedTypes('storage_provider', ['string'])
+            ->setAllowedTypes('storage_name', ['string'])
             ->setAllowedTypes('storage_source', ['string'])
             ->setAllowedTypes('handler', ['string'])
             ->setAllowedTypes('context', ['string'])
@@ -145,7 +138,6 @@ class AbstractMediaType extends AbstractType
                     'required' => $isUploadedFileRequired,
                     'constraints' => $options['constraints']
                 ]);
-
                 $form->add('quality', Type\TextType::class, [
                     'data'  => $parent->getImage()->getQuality(),
                     'label' => 'pi.form.label.field.quality',
@@ -153,7 +145,6 @@ class AbstractMediaType extends AbstractType
                         'class'=> 'other_collection',
                     ],
                 ]);
-
                 $form->add('connected', Type\CheckboxType::class, [
                     'data'  => $parent->getImage()->getConnected(),
                     'label' => 'pi.form.label.field.connexion_oblige',
@@ -174,6 +165,20 @@ class AbstractMediaType extends AbstractType
                     ],
                 ]);
 
+                if (!empty($options['storage_provider'])) {
+                    $form->add('providerStorage', Type\HiddenType::class, [
+                        'data' => $options['storage_provider'],
+                    ]);
+                } else {
+                    $form->add('providerStorage', ProviderChoicesType::class);
+                }
+
+                if (!empty($options['storage_name'])) {
+                    $form->add('providerName', Type\HiddenType::class, [
+                        'data' => $options['storage_name'],
+                    ]);
+                }
+
                 $form->add('metadata', Type\HiddenType::class, [
                     'required' => false,
                     'data'     => json_encode($options['metadata'], true),
@@ -182,32 +187,4 @@ class AbstractMediaType extends AbstractType
             50
         );
     }
-
-//    /**
-//     * @param FormBuilderInterface $builder
-//     * @param array $options
-//     */
-//    protected function setPostSubmit(FormBuilderInterface $builder, array $options)
-//    {
-//        $handler = $this->storageProviderHandler;
-//        $validator = $this->validator;
-//        $builder->addEventListener(
-//            FormEvents::POST_SUBMIT,
-//            function(FormEvent $event) use ($handler, $validator, $options) {
-//                print_r('coinconi');exit;
-//                $form = $event->getForm();
-//                if (!is_null($validator)) {
-//                    $violations = $validator->validate($form);
-//                    if (count($violations) > 0) {
-//                        return false;
-//                    }
-//                }
-//
-//                $media = $form->getData();
-//                if (null === $media) {
-//                    return false;
-//                }
-//            }
-//        );
-//    }
 }

@@ -92,6 +92,11 @@ class Media implements MediaInterface
     protected $mimeType;
 
     /**
+     * @var string
+     */
+    protected $providerStorage;
+
+    /**
      * @ORM\Column(name="provider_name_storage", type="string", nullable=true)
      */
     protected $providerName;
@@ -189,11 +194,10 @@ class Media implements MediaInterface
             'providerReference' => $this->providerReference,
             'providerData' => $this->providerData,
             'extension' => $this->extension,
-            'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
             'metadata' => $this->metadata,
-            'signing' => $this->signing,
-            'rangeip' => $this->rangeip,
+            'rangeIp' => $this->rangeIp,
             'roles' => $this->roles,
             'usernames' => $this->usernames,
         ];
@@ -222,11 +226,10 @@ class Media implements MediaInterface
         $this->providerReference = $unserializedData['providerReference'];
         $this->providerData = $unserializedData['providerData'];
         $this->extension = $unserializedData['extension'];
-        $this->createdAt = $unserializedData['createdAt'];
-        $this->updatedAt = $unserializedData['updatedAt'];
+        $this->created_at = $unserializedData['created_at'];
+        $this->updated_at = $unserializedData['updated_at'];
         $this->metadata = $unserializedData['metadata'];
-        $this->signing = $unserializedData['signing'];
-        $this->rangeip = $unserializedData['rangeip'];
+        $this->rangeIp = $unserializedData['rangeIp'];
         $this->roles = $unserializedData['roles'];
         $this->usernames = $unserializedData['usernames'];
     }
@@ -502,6 +505,28 @@ class Media implements MediaInterface
     }
 
     /**
+     * Set providerStorage.
+     *
+     * @param string $providerStorage
+     * @return $this
+     */
+    public function setProviderStorage($providerStorage)
+    {
+        $this->providerStorage = $providerStorage;
+        return $this;
+    }
+
+    /**
+     * Returns providerStorage.
+     *
+     * @return string
+     */
+    public function getProviderStorage()
+    {
+        return $this->providerStorage;
+    }
+
+    /**
      * Set providerName.
      *
      * @param string $providerName
@@ -729,44 +754,4 @@ class Media implements MediaInterface
     {
         return $this->quality;
     }
-
-//    /**
-//     * Set metadata.
-//     *
-//     * @param array|string $key
-//     * @param mixed        $value
-//     * @return $this
-//     */
-//    public function setMetadata($key, $value)
-//    {
-//        $this->metadata[$key] = $value;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Returns metadata.
-//     *
-//     * @param string|null $key
-//     * @return mixed|null
-//     */
-//    public function getMetadata($key = null)
-//    {
-//        if (null === $key) {
-//            return $this->metadata;
-//        }
-//
-//        return $this->hasMetadata($key) ? $this->metadata[$key] : null;
-//    }
-//
-//    /**
-//     * Returns weather metadata has a key
-//     *
-//     * @param string $key
-//     * @return mixed
-//     */
-//    public function hasMetadata($key)
-//    {
-//        return isset($this->metadata[$key]);
-//    }
 }

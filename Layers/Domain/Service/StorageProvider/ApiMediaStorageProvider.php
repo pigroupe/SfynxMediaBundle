@@ -108,8 +108,6 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
             $response = $this->create($media, $metadata);
             $apiMedia = json_decode($response->getContent(), true);
 
-//            dump($apiMedia);exit;
-
             $media->setProviderData($apiMedia);
             $media->setMimeType($apiMedia['mimeType']);
             $media->setProviderReference($apiMedia['reference']);
@@ -143,7 +141,8 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
             'name' => $media->getUploadedFile()->getClientOriginalName(),
             'description' => $media->getDescriptif(),
             'quality' => $media->getQuality(),
-            'metadata' => array_merge($metadata, [
+            'metadata' => \array_merge($metadata, [
+                'idMedia' => $media->getId(),
                 'title' => $media->getTitle(),
                 'description' => $media->getDescriptif(),
             ]),
@@ -153,7 +152,7 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
                 'usernames' => $media->getUsernames(),
                 'rangeip' => $media->getRangeIp(),
             ],
-            'media' => curl_file_create(
+            'media' => \curl_file_create(
                 $media->getUploadedFile()->getPathName(),
                 $media->getUploadedFile()->getClientMimeType(),
                 $media->getUploadedFile()->getClientOriginalName()
@@ -174,10 +173,10 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
         ) {
             $urls = [];
             foreach ($formats as $queries) {
-                $queries = array_filter($queries);
+                $queries = \array_filter($queries);
                 if (!empty($queries)) {
                     $queries['noresponse'] = 1;
-                    array_push($urls, RestApiClientBasicImplementor::addQueryString($media->getUrl(), $queries));
+                    \array_push($urls, RestApiClientBasicImplementor::addQueryString($media->getUrl(), $queries));
                 }
             }
 
@@ -191,8 +190,8 @@ class ApiMediaStorageProvider extends AbstractStorageProvider
             $asyncRequest = new Asynchronous\AsyncRequest();
             $asyncRequest->setParallelLimit($formatsCreation['parallel_limit']);
             foreach ($urls as $url) {
-                $request = new Asynchronous\Request($url);
-                $asyncRequest->enqueue(new Asynchronous\Request($url, $formatsCreation['curlopt_timeout_ms']));
+                $request = new Asynchronous\Request($url, $formatsCreation['curlopt_timeout_ms']);
+                $asyncRequest->enqueue($request);
             }
             $asyncRequest->run($formatsCreation['timeout_wait_response']);
         }

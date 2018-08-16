@@ -85,7 +85,7 @@ class MediathequeType extends AbstractType
         $builder
                 ->add('status', HiddenType::class, [
                     "data"        => $this->_status,
-                    "label_attr" => array(
+                    'label_attr' => array(
                             "class"=> $this->_class,
                     ),
                     'required'  => false,
@@ -93,7 +93,7 @@ class MediathequeType extends AbstractType
 //                ->add('updated_at', null, array(
 //                    'widget' => 'single_text', // choice, text, single_text
 //                    'attr'=>array('style'=>'display:none;'),
-//                    "label_attr" => array(
+//                    'label_attr' => array(
 //                        "style"=> 'display:none;',
 //                    ),
 //                ))
@@ -104,7 +104,7 @@ class MediathequeType extends AbstractType
                  ->add('enabled', CheckboxType::class, [
                     //'data'  => true,
                      'label'    => 'pi.form.label.field.enabled',
-                     "label_attr" => array(
+                     'label_attr' => array(
                          "class"=> $this->_class,
                      ),
                 ])
@@ -121,7 +121,7 @@ class MediathequeType extends AbstractType
                     'label_attr' => [
                         'class'=> 'taxonomies_collection',
                     ],
-                    "attr" => array(
+                    'attr' => array(
                         "class"=>"pi_simpleselect ajaxselect", // ajaxselect
                         "data-url" => $this->routeFactory->generate("admin_gedmo_category_selectentity_ajax", array('type'=> Category::TYPE_MEDIA)),
                         "data-selectid" => $id_category,
@@ -139,20 +139,20 @@ class MediathequeType extends AbstractType
                 ])
                  ->add('title', TextType::class, [
                     'label'      => "pi.form.label.field.title",
-                    "label_attr" => [
+                    'label_attr' => [
                         "class" => $this->_class,
                     ],
                     'required' => true
                  ])
                  ->add('descriptif', TextareaType::class, [
                     'label'    => 'pi.form.label.field.description',
-                    "label_attr" => array(
+                    'label_attr' => array(
                         "class"=>"content_collection",
                     ),
                  ])
                  ->add('url', TextType::class, [
-                    "label"     => "pi.form.label.field.url",
-                    "label_attr" => [
+                    'label'     => "pi.form.label.field.url",
+                    'label_attr' => [
                         "class"=> $this->_class,
                     ],
                     'required'  => false
@@ -162,7 +162,7 @@ class MediathequeType extends AbstractType
             $builder
                 ->add('enabled', HiddenType::class, [
                     'data'  => true,
-                     "label_attr" => [
+                     'label_attr' => [
                          "class"=> $this->_class,
                      ],
                 ])
@@ -179,7 +179,7 @@ class MediathequeType extends AbstractType
                     'label_attr' => [
                         'class'=> 'taxonomies_collection',
                     ],
-                    "attr" => array(
+                    'attr' => array(
                         "class" => "pi_simpleselect ajaxselect", // ajaxselect
                         "data-url" => $this->routeFactory->generate("admin_gedmo_category_selectentity_ajax", array('type'=> Category::TYPE_MEDIA)),
                         "data-selectid" => $id_category,
@@ -200,20 +200,20 @@ class MediathequeType extends AbstractType
             $builder
             ->add('enabled', HiddenType::class, [
                     'data'  => true,
-                    "label_attr" => array(
+                    'label_attr' => array(
                         "class"=> $this->_class,
                     ),
             ])
             ->add('title', TextType::class, [
                     'label'            => "pi.form.label.field.title",
-                    "label_attr" => array(
+                    'label_attr' => array(
                         "class"=> $this->_class,
                     ),
                     'required' => true,
             ])
             ->add('descriptif', TextareaType::class, [
                     'label'    => 'pi.form.label.field.description',
-                    "label_attr" => array(
+                    'label_attr' => array(
                             "class"=>"content_collection",
                     ),
             ])
@@ -222,16 +222,16 @@ class MediathequeType extends AbstractType
             $builder
             ->add('enabled', HiddenType::class, [
                     'data'  => true,
-                "label_attr" => [
+                'label_attr' => [
                     "class"=> $this->_class,
                 ],
             ])
             ->add('title', TextType::class, [
                 'label'      => "pi.form.label.field.title",
-                "label_attr" => [
+                'label_attr' => [
                     "class"=> $this->_class,
                 ],
-                'required'    => true,
+                'required' => true,
             ])
             ;
         } elseif (($this->_simpleLink == "simpleLink")
@@ -241,8 +241,8 @@ class MediathequeType extends AbstractType
             $builder
             ->add('enabled', HiddenType::class, [
                     'data'  => true,
-                     "label_attr" => [
-                         "class"=> $this->_class,
+                     'label_attr' => [
+                         "class" => $this->_class,
                      ],
                 ])
             ;
@@ -255,7 +255,8 @@ class MediathequeType extends AbstractType
             if ($this->_labelLink == "")  $this->_labelLink = 'pi.form.label.media.file';
             if ($this->_context == "")    $this->_context   = 'default';
              $builder->add('image', RelatedToOneMediaType::class, [
-                     'storage_provider' => 'gaufrette_storage_gallery_azure',
+//                     'storage_provider' => 'sfynx.media.storage_provider.api_media',
+                     'storage_name' => 'gaufrette_storage_gallery_azure',
                      'storage_source' => 'mediatheque/file',
                      'handler' => 'sfynx.media.provider.file',
                      'metadata' => [
@@ -264,18 +265,19 @@ class MediathequeType extends AbstractType
                      ],
                      'context' => $this->_context,
                      'label' => $this->_labelLink,
-                     "label_attr" => [
+                     'label_attr' => [
                          "class"=> $this->_class,
                          "style"=> $style,
                      ],
-                     "attr"     => ["style"=> $style],
+                     'attr'     => ["style"=> $style],
                      'required' => false,
              ]);
          } elseif ($this->_status == "picture") {
              if ($this->_labelLink == "") $this->_labelLink = 'pi.form.label.media.picture';
              if ($this->_context == "")    $this->_context  = 'default';
              $builder->add('image', RelatedToOneMediaType::class, [
-                     'storage_provider' => 'gaufrette_storage_gallery_azure',
+//                     'storage_provider' => 'sfynx.media.storage_provider.api_media',
+                     'storage_name' => 'gaufrette_storage_gallery_azure',
                      'storage_source' => 'mediatheque/picture',
                      'handler'     => 'sfynx.media.provider.picture',
                      'metadata' => [
@@ -284,18 +286,19 @@ class MediathequeType extends AbstractType
                      ],
                      'context'      => $this->_context,
                      'label'        => $this->_labelLink,
-                     "label_attr" => [
+                     'label_attr' => [
                          "class"=> $this->_class,
                          "style"=> $style,
                      ],
-                     "attr"    => ["style"=> $style],
+                     'attr'    => ["style"=> $style],
                      'required'  => false,
              ]);
              if ($this->_simpleLink == "simpleWithIcon") {
                  if ($this->_labelLink == "") $this->_labelLink = 'miniature';
                  if ($this->_context == "")    $this->_context        = 'default';
                  $builder->add('image2', RelatedToOneMediaType::class, [
-                        'storage_provider' => 'gaufrette_storage_gallery_azure',
+//                        'storage_provider' => 'sfynx.media.storage_provider.api_media',
+                        'storage_name' => 'gaufrette_storage_gallery_azure',
                         'storage_source' => 'mediatheque/picture',
                          'handler' => 'sfynx.media.provider.picture',
                         'metadata' => [
@@ -304,11 +307,11 @@ class MediathequeType extends AbstractType
                         ],
                          'context' => $this->_context,
                          'label' => "pi.form.label.media.picture.miniature",
-                         "label_attr" => [
+                         'label_attr' => [
                             "class"=> $this->_class,
                             "style"=> $style,
                          ],
-                         "attr"    => ["style"=> $style],
+                         'attr'    => ["style"=> $style],
                          'required'  => false,
                  ]);
              }
@@ -316,33 +319,35 @@ class MediathequeType extends AbstractType
              if ($this->_labelLink == "") $this->_labelLink = 'pi.form.label.media.youtube';
              if ($this->_context == "")   $this->_context   = 'default';
              $builder->add('image', RelatedToOneMediaType::class, [
-                     'storage_provider' => '',
-                     'storage_source' => '',
-                     'handler' => 'sfynx.media.provider.youtube',
-                     'context' => $this->_context,
-                     'label' => $this->_labelLink,
-                     "label_attr" => [
-                         "class"=> $this->_class,
-                         "style"=> $style,
-                     ],
-                     "attr"     => ["style"=> $style],
-                     'required' => false,
+                 'storage_provider' => '',
+                 'storage_name' => '',
+                 'storage_source' => '',
+                 'handler' => 'sfynx.media.provider.youtube',
+                 'context' => $this->_context,
+                 'label' => $this->_labelLink,
+                 'label_attr' => [
+                     "class"=> $this->_class,
+                     "style"=> $style,
+                 ],
+                 'attr'     => ["style"=> $style],
+                 'required' => false,
              ]);
          } elseif ($this->_status == "dailymotion") {
              if ($this->_labelLink == "") $this->_labelLink = 'pi.form.label.media.dailymotion';
              if ($this->_context == "")   $this->_context   = 'default';
              $builder->add('image', RelatedToOneMediaType::class, [
-                     'storage_provider' => '',
-                     'storage_source' => '',
-                     'handler' => 'sfynx.media.provider.dailymotion',
-                     'context' => $this->_context,
-                     'label' => $this->_labelLink,
-                     "label_attr" => [
-                         "class"=> $this->_class,
-                         "style"=> $style,
-                     ],
-                     "attr" => ["style"=> $style],
-                     'required' => false,
+                 'storage_provider' => '',
+                 'storage_name' => '',
+                 'storage_source' => '',
+                 'handler' => 'sfynx.media.provider.dailymotion',
+                 'context' => $this->_context,
+                 'label' => $this->_labelLink,
+                 'label_attr' => [
+                     "class"=> $this->_class,
+                     "style"=> $style,
+                 ],
+                 'attr' => ["style"=> $style],
+                 'required' => false,
               ]);
          }
 
@@ -353,17 +358,17 @@ class MediathequeType extends AbstractType
                      'required'  => false,
                      'help_block' => $this->translator->trans('pi.media.form.field.mediadelete', ['%s'=>$this->_status]),
                      'label'      => "pi.delete",
-                     "label_attr" => [
+                     'label_attr' => [
                          "class" => $this->_class,
                      ],
-                     "attr" => ["style"=> $style],
+                     'attr' => ["style"=> $style],
                  ]);
          }
 
          $builder
          ->add('copyright', TextareaType::class, [
-                 "label"     => "Crédit photo",
-                 "label_attr" => [
+                 'label'     => "Crédit photo",
+                 'label_attr' => [
                     "class"=> 'licence_collection',
                  ],
                  'required' => false,

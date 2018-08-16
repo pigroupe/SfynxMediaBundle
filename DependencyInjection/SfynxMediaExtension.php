@@ -45,34 +45,11 @@ class SfynxMediaExtension extends Extension
         /*
          * Mapping config parameter
          */
-        if (isset($config['mapping']['provider'])) {
-            $container->setParameter('sfynx.media.mapping.provider', $config['mapping']['provider']);
-        }
-
-        if (isset($config['mapping']['media_class'])) {
-            $container->setParameter('sfynx.media.media_class', $config['mapping']['media_class']);
-        }
-        if (isset($config['mapping']['media_entitymanager_command'])) {
-            $container->setParameter('sfynx.media.media.entitymanager.command', $config['mapping']['media_entitymanager_command']);
-        }
-        if (isset($config['mapping']['media_entitymanager_query'])) {
-            $container->setParameter('sfynx.media.media.entitymanager.query', $config['mapping']['media_entitymanager_query']);
-        }
-        if (isset($config['mapping']['media_entitymanager'])) {
-            $container->setParameter('sfynx.media.media.entitymanager', $config['mapping']['media_entitymanager']);
-        }
-
-        if (isset($config['mapping']['mediatheque_class'])) {
-            $container->setParameter('sfynx.media.mediatheque_class', $config['mapping']['mediatheque_class']);
-        }
-        if (isset($config['mapping']['mediatheque_entitymanager_command'])) {
-            $container->setParameter('sfynx.media.mediatheque.entitymanager.command', $config['mapping']['mediatheque_entitymanager_command']);
-        }
-        if (isset($config['mapping']['mediatheque_entitymanager_query'])) {
-            $container->setParameter('sfynx.media.mediatheque.entitymanager.query', $config['mapping']['mediatheque_entitymanager_query']);
-        }
-        if (isset($config['mapping']['mediatheque_entitymanager'])) {
-            $container->setParameter('sfynx.media.mediatheque.entitymanager', $config['mapping']['mediatheque_entitymanager']);
+        if (isset($config['mapping']['entities'])) {
+            $container->setParameter("sfynx.media.mapping.entities", $config['mapping']['entities']);
+            foreach ($config['mapping']['entities'] as $entity => $param) {
+                $container->setParameter("sfynx.media.mapping.{$entity}.class", $param['class']);
+            }
         }
 
         /**

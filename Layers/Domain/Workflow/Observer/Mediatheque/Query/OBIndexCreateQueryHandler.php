@@ -25,7 +25,7 @@ class OBIndexCreateQueryHandler extends AbstractIndexCreateQueryHandler
     protected function process(): void
     {
         try {
-            $this->wfLastData->query = $this->manager->getQueryRepository('FindAllByCategoryQueryBuilder', [
+            $this->wfLastData->query = $this->manager->getQueryRepository('FindAllByCategoryQueryTransfomer', [
                 $this->wfQuery->getCategory(),
                 null,
                 '',
